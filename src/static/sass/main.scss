@@ -40,3 +40,21 @@ $fonts:"Regular",
         font-family: "Poppins-#{$ft}";
     }
 }
+
+
+.hover-Top {
+    transition: transform 0.15s ease-in;
+
+    &:hover {
+
+        transform: translateY(-10px);
+    }
+}
+
+.invisible {
+    display: none !important;
+}
+
+.width-slide-effect{
+    transition: width 0.2s ease;
+}

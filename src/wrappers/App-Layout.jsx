@@ -1,11 +1,22 @@
 import React from "react";
-import { makeStyles, Box, Typography, Button } from "@material-ui/core";
+import {
+  makeStyles,
+  Box,
+  Typography,
+  Button,
+  Menu as Dropdown,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  List,
+  ListItem,
+} from "@material-ui/core";
 import avatartImg from "../static/images/ai-user.jpg";
 import {
   Menu,
   Settings,
   Home,
-  AccountBalance,
+  AccountBox,
   Lock,
   Edit,
   LocationOn,
@@ -13,6 +24,8 @@ import {
   Speed,
   Warning,
   Policy,
+  Feedback,
+  ExitToApp,
 } from "@material-ui/icons";
 const { useEffect, useState } = React;
 
@@ -24,7 +37,7 @@ const siteNavigation = [
   },
   {
     href: "/users",
-    icon: AccountBalance,
+    icon: AccountBox,
     title: "users",
   },
   {
@@ -51,6 +64,11 @@ const siteNavigation = [
     href: "/stations",
     icon: Policy,
     title: "stations",
+  },
+  {
+    href: "/feedbacks",
+    icon: Feedback,
+    title: "feedbacks",
   },
   {
     href: "/logs",
@@ -80,6 +98,11 @@ const styles = makeStyles((df) => {
       flexDirection: "row",
       justifyContent: "space-between",
     },
+    topBarDock: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+    },
     topBarIconButton: {
       minWidth: "34px",
     },
@@ -98,78 +121,158 @@ const styles = makeStyles((df) => {
       height: "65px",
       borderRadius: "50%",
       border: `2px solid #fff`,
-      padding: "2px",
+    },
+    userImgDockMode: {
+      alignSelf: "center",
+      width: "35px",
+      height: "35px",
+      borderRadius: "50%",
+      border: `2px solid #fff`,
     },
     sideBar: {
       height: "100vh",
-      width: "150px",
+      width: (props) => props.sideBarSize,
+    },
+    sideBarFakeElement: {
+      width: "inherit",
+      height: "inherit",
       display: "flex",
       flexDirection: "column",
       backgroundColor: df.palette.primary.main,
       boxShadow: df.shadows[16],
-    },
-    sideBarListWrapper: {
-      display: "flex",
-      flexDirection: "column",
+      overflowY: "scroll",
+      overflowX: "hidden",
     },
   };
 });
 
 const SIDEBAR = (props) => {
+  const [dockMode, setDockMode] = useState(true);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (ev) => {
+    setAnchorEl(ev.currentTarget);
+  };
+
+  const handleClose = () => setAnchorEl(null);
+
+  const dropdownMenuItems = [
+    {
+      title: "profile",
+      evt: () => console.log("cliecked"),
+      icon: AccountBox,
+    },
+    {
+      title: "logout",
+      evt: () => console.log("cliecked"),
+      icon: ExitToApp,
+    },
+  ];
+
   const {
     userImg,
     sideBar,
     userImgWrapper,
     topBar,
     topBarIconButton,
-    sideBarListWrapper,
-  } = styles();
+    sideBarFakeElement,
+    userImgDockMode,
+    topBarDock,
+  } = styles({ sideBarSize: dockMode ? "75px" : "200px" });
   return (
     <Box className={sideBar}>
-      <Box className={topBar} mt={2} px={1}>
-        <Button variant="text" className={topBarIconButton + " " + "white-clr"}>
-          <Menu />
-        </Button>
+      <Box
+        position="fixed"
+        className={sideBarFakeElement + " " + "width-slide-effect"}
+      >
+        <Box className={dockMode ? topBarDock : topBar} mt={2} px={1}>
+          <Button
+            onClick={() => setDockMode(!dockMode)}
+            variant="text"
+            className={`${topBarIconButton} white-clr `}
+          >
+            <Menu />
+          </Button>
 
-        <Button variant="text" className={topBarIconButton + " " + "white-clr"}>
-          <Settings />
-        </Button>
-      </Box>
-      <Box className={userImgWrapper}>
-        <img src={avatartImg} className={userImg} />
-        <Box mt={1}>
-          <Typography
-            variant="subtitle1"
-            align="center"
-            className={"white-clr"}
+          <Button
+            aria-controls="simple-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
+            variant="text"
+            className={`${topBarIconButton} white-clr`}
           >
-            username
-          </Typography>
-          <Typography
-            variant="caption"
-            align="center"
-            className={"white-clr"}
-            style={{ display: "block" }}
+            <Settings />
+          </Button>
+
+          <Dropdown
+            id="user-dropdown-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
           >
-            job title
-          </Typography>
+            {dropdownMenuItems.map((mi, ind) => {
+              return (
+                <MenuItem
+                  key={`dropdown-item-${ind}`}
+                  onClick={mi.evt}
+                  className="capitalize"
+                >
+                  <ListItemIcon>
+                    <mi.icon />
+                  </ListItemIcon>
+                  <ListItemText>{mi.title}</ListItemText>
+                </MenuItem>
+              );
+            })}
+          </Dropdown>
         </Box>
-      </Box>
-      <Box className={sideBarListWrapper} mt={3} pl={2}>
-        {siteNavigation.map((Li) => {
-          return (
-            <Box display="flex" flexDirection="row" py={1}>
-              <Li.icon className="white-clr" size="lg" />
-              <Typography
-                variant="caption"
-                style={{ marginLeft: "14px" }}
-                className="white-clr capitalize"
-              >
-                {Li.title}
-              </Typography>
-            </Box>
-          );
-        })}
+        <Box className={userImgWrapper}>
+          <img
+            src={avatartImg}
+            className={`${dockMode ? userImgDockMode : userImg}`}
+          />
+          <Box mt={1} className={` ${dockMode ? "invisible" : ""}`}>
+            <Typography
+              variant="subtitle1"
+              align="center"
+              className={`white-clr`}
+            >
+              username
+            </Typography>
+            <Typography
+              variant="caption"
+              align="center"
+              style={{ display: "block" }}
+              className={`white-clr`}
+            >
+              job title
+            </Typography>
+          </Box>
+        </Box>
+        <Box mt={dockMode ? 0 : 3}>
+          <List component="nav">
+            {siteNavigation.map((Li, index) => {
+              return (
+                <ListItem
+                  key={`li-nav-item${index}`}
+                  button
+                  component="a"
+                  href={Li.href}
+                >
+                  <ListItemIcon>
+                    <Li.icon className="white-clr" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={Li.title}
+                    className={`white-clr ${!dockMode ? "" : "invisible"}`}
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
+        </Box>
       </Box>
     </Box>
   );

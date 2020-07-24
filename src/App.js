@@ -1,4 +1,10 @@
 import React from "react";
+import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
+import LoginContainer from "./containers/login/login-container";
+import DashHomeContainer from "./containers/home/dashboard-home-container";
+import ProfileContainer from "./containers/profile/profile-container";
+import UsersGridTable from "./containers/tables/users/users-table";
+import Logout from "./containers/logout/logout-container";
 import {
   CssBaseline,
   createMuiTheme,
@@ -6,7 +12,6 @@ import {
   StylesProvider,
 } from "@material-ui/core";
 import "./static/sass/main.scss";
-import Layout from "./wrappers/App-Layout";
 
 const overridedTheme = createMuiTheme({
   typography: {
@@ -14,33 +19,34 @@ const overridedTheme = createMuiTheme({
   },
   palette: {
     primary: {
-      main: "#0984e3",
+      main: "#03A9F4",
     },
     secondary: {
-      main: "#dfe6e9",
+      main: "#607D8B",
     },
     warning: {
-      main: "#fdcb6e",
+      main: "#FFC107",
     },
     info: {
-      main: "#81ecec", // #00cec9
+      main: "#3F51B5", // #00cec9
     },
     error: {
-      main: "#ff7675", //#d63031
+      main: "#E91E63", //#d63031
     },
     success: {
-      main: "#55efc4", // #00b894
+      main: "#009688", // #00b894
     },
     black: {
       main: "#2d3436",
     },
     subtitle: {
-      main: "#636e72",
+      main: "#576574",
     },
   },
   overrides: {
     MuiCssBaseline: {
       "@global": {
+        color: "#222f3e",
         ".white-clr": {
           color: "#fff",
         },
@@ -55,13 +61,46 @@ const overridedTheme = createMuiTheme({
   },
 });
 
+const gridTables = [
+  {
+    path: "/users",
+    component: UsersGridTable,
+  },
+];
+
 function App() {
   return (
     <React.Fragment>
       <StylesProvider injectFirst>
         <ThemeProvider theme={overridedTheme}>
           <CssBaseline />
-          <Layout />
+          <Router>
+            <Switch>
+              <Route path="/login" exact={true}>
+                <LoginContainer />
+              </Route>
+
+              <Route path="/logout">
+                <Logout />
+              </Route>
+
+              <Route path="/profile">
+                <ProfileContainer />
+              </Route>
+
+              {gridTables.map((t, i) => {
+                return (
+                  <Route key={`route-item-${i}`} path={t.path}>
+                    <t.component />
+                  </Route>
+                );
+              })}
+
+              <Route path="/">
+                <DashHomeContainer />
+              </Route>
+            </Switch>
+          </Router>
         </ThemeProvider>
       </StylesProvider>
     </React.Fragment>
