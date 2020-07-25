@@ -6,4 +6,9 @@ export default {
     jwtCheckerLoad: null,
     jwtCheckerFail: null,
   },
+  index: {
+    entitesLoad: null,
+    entitesFail: null,
+    entites: null,
+  },
 };

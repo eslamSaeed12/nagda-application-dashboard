@@ -27,7 +27,7 @@ const AuthWrapper = (Component) => {
         this.props.auth.authenticated &&
         this.props.auth.user
       ) {
-        return <Component />;
+        return <Component {...this.props} />;
       }
       return <Redirect to="/login" />;
     }

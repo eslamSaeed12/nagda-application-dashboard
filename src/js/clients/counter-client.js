@@ -1,17 +1,13 @@
 import axios from "axios";
 
 class client {
-  login({ username, password, csrf, action, method }) {
+  counts({ action, jwt }) {
     return axios.request({
-      method,
+      method: "POST",
       url: action,
       withCredentials: true,
-      data: {
-        username,
-        password,
-      },
       headers: {
-        "meta-x-csrf": csrf,
+        "x-meta-jwt": jwt,
       },
     });
   }

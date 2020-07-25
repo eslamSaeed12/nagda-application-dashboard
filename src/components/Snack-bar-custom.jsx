@@ -7,7 +7,7 @@ const styles = makeStyles((df) => ({
   whiteBtn: {
     backgroundColor: "#fff",
     color: df.palette.error.main,
-    borderColor:df.palette.error.main,
+    borderColor: df.palette.error.main,
     "&:hover": {
       borderColor: "#ffff",
       color: "#ffff",
@@ -24,6 +24,7 @@ function Alerto(props) {
       elevation={props.shadows}
       variant={props.variant}
       severity={props.severity}
+      style={{ textAlign: "center" }}
     >
       <AlertTitle>{props.title}</AlertTitle>
       {props.content ? (

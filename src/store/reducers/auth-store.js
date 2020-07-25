@@ -13,7 +13,6 @@ export const authStore = (state = ini.auth, action) => {
   switch (action.type) {
     case CHECK_JWT_USER_LOAD:
       return { ...state, jwtCheckerLoad: action.payload };
-      break;
     case CHECK_JWT_USER_FAIL:
       return {
         ...state,
@@ -21,31 +20,25 @@ export const authStore = (state = ini.auth, action) => {
         user: null,
         authenticated: false,
       };
-      break;
     case CHECK_JWT_USER_DATA:
       return { ...state, user: action.payload, authenticated: true };
-
     case AUTH_TRUSY:
       return { ...state, authenticated: action.payload };
-      break;
     case AUTH_JWT:
       return { ...state, META_JWT_KEY: action.payload };
-      break;
     case AUTH_USER:
       return { ...state, user: action.payload };
-      break;
 
     case AUTH_LOGOUT:
       return {
         ...state,
         user: null,
         authenticated: false,
-        user: null,
         jwtCheckerFail: null,
         jwtCheckerLoad: null,
       };
-      break;
-  }
 
-  return state;
+    default:
+      return { ...state };
+  }
 };

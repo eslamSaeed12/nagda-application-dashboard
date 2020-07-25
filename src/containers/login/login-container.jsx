@@ -103,6 +103,8 @@ const Login = (props) => {
   useEffect(() => {
     if (props.auth.jwtCheckerFail) {
       setErr(true);
+      //props.dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
+      setLoading(false);
     }
   }, [props.auth.jwtCheckerFail]);
 

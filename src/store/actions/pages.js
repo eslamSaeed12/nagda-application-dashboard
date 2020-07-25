@@ -8,7 +8,12 @@ import {
   AUTH_JWT,
   AUTH_USER,
   AUTH_LOGOUT,
+  ENTITIES_COUNT,
+  ENTITIES_COUNT_DATA,
+  ENTITIES_COUNT_FAIL,
+  ENTITIES_COUNT_LOAD,
 } from "./names";
+import counter from "../../js/clients/counter-client";
 
 export const commonly = {
   CHECK_JWT_TOKEN_LOAD: (payload) => ({ type: CHECK_JWT_USER_LOAD, payload }),
@@ -21,9 +26,9 @@ export const commonly = {
         action: constants["api-host"] + "/auth/anti-forgery",
       })
         .then((e) => {
-          console.log(e);
           dispatch(commonly.CHECK_JWT_TOKEN_DT(e.data.body));
           dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
+          dispatch(authEvents.AUTH_JWT(jwt));
         })
         .catch((err) => {
           dispatch(commonly.CHECK_JWT_TOKEN_FAIL(err.message));
@@ -44,4 +49,35 @@ export const authEvents = {
   AUTH_JWT: (payload) => ({ type: AUTH_JWT, payload }),
   AUTH_USER: (payload) => ({ type: AUTH_USER, payload }),
   AUTH_LOGOUT: () => ({ type: AUTH_LOGOUT }),
+};
+
+// index page
+
+export const indexEvents = {
+  ENTITES_COUNTS_TRUTHY: (payload) => ({ type: ENTITIES_COUNT_LOAD, payload }),
+  ENTITES_COUNTS_FAIL: (payload) => ({ type: ENTITIES_COUNT_FAIL, payload }),
+  ENTITES_COUNTS_DT: (payload) => ({ type: ENTITIES_COUNT_DATA, payload }),
+  ENTITIES_COUNTS_FN: (jwt) => {
+    return (dispatch) => {
+      dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(false));
+      counter
+        .counts({
+          action: constants["api-host"] + "/misc/entites-counter",
+          jwt,
+        })
+        .then((e) => {
+          dispatch(indexEvents.ENTITES_COUNTS_DT(e.data.body));
+          dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));
+        })
+        .catch((err) => {
+          console.log(err);
+          dispatch(
+            indexEvents.ENTITES_COUNTS_FAIL(
+              err.response.data.msg || err.message
+            )
+          );
+          dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));
+        });
+    };
+  },
 };
