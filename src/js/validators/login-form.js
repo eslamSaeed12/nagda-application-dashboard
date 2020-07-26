@@ -17,6 +17,7 @@ const schema = yup.object().shape({
     .min(8)
     .max(18)
     .required(),
+  rememberMe: yup.boolean(),
 });
 
 export default schema;

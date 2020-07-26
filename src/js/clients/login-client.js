@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class client {
-  login({ username, password, csrf, action, method }) {
+  login({ username, password, rememberMe, csrf, action, method }) {
     return axios.request({
       method,
       url: action,
@@ -9,6 +9,7 @@ class client {
       data: {
         username,
         password,
+        rememberMe,
       },
     });
   }

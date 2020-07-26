@@ -16,6 +16,7 @@ import {
   Typography,
   Button,
   Container,
+  FormHelperText,
   Grid,
   TextField,
   Chip,
@@ -72,7 +73,9 @@ const Login = (props) => {
       return;
     } catch (e) {
       if (e.response) {
-        setErr(e.response.data.msg || e.response.msg);
+        setErr(
+          e.response.data.msg || JSON.parse(e.request.response).msg || e.message
+        );
       } else {
         setErr(e.message);
       }
@@ -199,13 +202,20 @@ const Login = (props) => {
                       <FormControlLabel
                         control={
                           <Checkbox
-                            label="remember me"
-                            name="remember"
+                            inputRef={register}
+                            label="rememberMe"
+                            name="rememberMe"
                             color="primary"
                           />
                         }
                         label="remember me"
+                        name="rememberMe"
                       />
+                      {errors.rememberMe ? (
+                        <FormHelperText variant="filled" error={true}>
+                          {errors.rememberMe.message}
+                        </FormHelperText>
+                      ) : null}
                     </Box>
 
                     <Box my={3} mx="auto">
