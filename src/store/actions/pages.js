@@ -5,33 +5,39 @@ import {
   CHECK_JWT_USER_FAIL,
   CHECK_JWT_USER_DATA,
   AUTH_TRUSY,
-  AUTH_JWT,
   AUTH_USER,
   AUTH_LOGOUT,
-  ENTITIES_COUNT,
   ENTITIES_COUNT_DATA,
   ENTITIES_COUNT_FAIL,
   ENTITIES_COUNT_LOAD,
+  AUTH_LOGOUT_FAIL,
+  AUTH_LOGOUT_LOAD,
 } from "./names";
 import counter from "../../js/clients/counter-client";
+import LOGOUT_CLIENT from "../../js/clients/logout-client";
 
 export const commonly = {
   CHECK_JWT_TOKEN_LOAD: (payload) => ({ type: CHECK_JWT_USER_LOAD, payload }),
   CHECK_JWT_TOKEN_FAIL: (payload) => ({ type: CHECK_JWT_USER_FAIL, payload }),
-  CHECK_JWT_TOKEN_FN: (jwt) => {
+  CHECK_JWT_TOKEN_FN: () => {
     return (dispatch) => {
       dispatch(commonly.CHECK_JWT_TOKEN_LOAD(false));
       CHECK_JWT_TOKEN_CLIENT.check({
-        jwt,
-        action: constants["api-host"] + "/auth/anti-forgery",
+        action: constants["api-host"] + "/auth/who-me",
       })
         .then((e) => {
+          // assign user data
           dispatch(commonly.CHECK_JWT_TOKEN_DT(e.data.body));
           dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
-          dispatch(authEvents.AUTH_JWT(jwt));
         })
         .catch((err) => {
-          dispatch(commonly.CHECK_JWT_TOKEN_FAIL(err.message));
+          dispatch(
+            commonly.CHECK_JWT_TOKEN_FAIL(
+              JSON.parse(err.request.response).msg ||
+                err.response.msg ||
+                err.message
+            )
+          );
           dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
         });
     };
@@ -46,9 +52,25 @@ export const authEvents = {
     type: AUTH_TRUSY,
     payload,
   }),
-  AUTH_JWT: (payload) => ({ type: AUTH_JWT, payload }),
   AUTH_USER: (payload) => ({ type: AUTH_USER, payload }),
   AUTH_LOGOUT: () => ({ type: AUTH_LOGOUT }),
+  AUTH_LOGOUT_FAIL: (payload) => ({ type: AUTH_LOGOUT_FAIL, payload }),
+  AUTH_LOGOUT_LOAD: (payload) => ({ type: AUTH_LOGOUT_LOAD, payload }),
+  AUTH_LOGOUT_FN: () => {
+    return (dispatch) => {
+      dispatch(authEvents.AUTH_LOGOUT_LOAD(false));
+      LOGOUT_CLIENT.logout({
+        action: constants["api-host"] + "/auth/logout",
+      })
+        .then((e) => {
+          dispatch(authEvents.AUTH_LOGOUT_LOAD(true));
+        })
+        .catch((er) => {
+          dispatch(authEvents.AUTH_LOGOUT_FAIL(er.response.msg || er.message));
+          dispatch(authEvents.AUTH_LOGOUT_LOAD(true));
+        });
+    };
+  },
 };
 
 // index page
@@ -57,23 +79,23 @@ export const indexEvents = {
   ENTITES_COUNTS_TRUTHY: (payload) => ({ type: ENTITIES_COUNT_LOAD, payload }),
   ENTITES_COUNTS_FAIL: (payload) => ({ type: ENTITIES_COUNT_FAIL, payload }),
   ENTITES_COUNTS_DT: (payload) => ({ type: ENTITIES_COUNT_DATA, payload }),
-  ENTITIES_COUNTS_FN: (jwt) => {
+  ENTITIES_COUNTS_FN: () => {
     return (dispatch) => {
       dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(false));
       counter
         .counts({
           action: constants["api-host"] + "/misc/entites-counter",
-          jwt,
         })
         .then((e) => {
           dispatch(indexEvents.ENTITES_COUNTS_DT(e.data.body));
           dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));
         })
         .catch((err) => {
-          console.log(err);
           dispatch(
             indexEvents.ENTITES_COUNTS_FAIL(
-              err.response.data.msg || err.message
+              JSON.parse(err.request.response).msg ||
+                err.response.data.msg ||
+                err.message
             )
           );
           dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));

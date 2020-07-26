@@ -5,6 +5,8 @@ export default {
     user: null,
     jwtCheckerLoad: null,
     jwtCheckerFail: null,
+    logoutLoad: null,
+    logoutFail: null,
   },
   index: {
     entitesLoad: null,

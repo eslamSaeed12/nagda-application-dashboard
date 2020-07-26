@@ -1,14 +1,11 @@
 import axios from "axios";
 
 class client {
-  counts({ action, jwt }) {
+  counts({ action }) {
     return axios.request({
       method: "POST",
       url: action,
       withCredentials: true,
-      headers: {
-        "x-meta-jwt": jwt,
-      },
     });
   }
 }

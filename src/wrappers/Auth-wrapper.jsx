@@ -9,26 +9,17 @@ const AuthWrapper = (Component) => {
     };
     dispatcher = this.props.dispatch;
     componentDidMount() {
-      const token = localStorage.getItem("META-JWT-KEY");
-      if (!token) {
-        this.dispatcher(authEvents.AUTH_TRUSY(false));
-        this.dispatcher(authEvents.AUTH_USER(null));
-        this.dispatcher(commonly.CHECK_JWT_TOKEN_LOAD(true));
-        return;
-      }
-      this.dispatcher(commonly.CHECK_JWT_TOKEN_FN(token));
+      this.dispatcher(commonly.CHECK_JWT_TOKEN_FN());
     }
     render() {
-      if (!this.props.auth.jwtCheckerLoad) {
+      if (!this.props.auth.jwtCheckerLoad && !this.props.jwtCheckerFail) {
         return <Loader />;
       }
-      if (
-        this.props.auth.jwtCheckerLoad &&
-        this.props.auth.authenticated &&
-        this.props.auth.user
-      ) {
+
+      if (this.props.auth.jwtCheckerLoad && this.props.auth.user) {
         return <Component {...this.props} />;
       }
+
       return <Redirect to="/login" />;
     }
   };

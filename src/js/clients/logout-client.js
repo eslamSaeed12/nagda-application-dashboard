@@ -1,15 +1,11 @@
 import axios from "axios";
 
 class client {
-  login({ username, password, csrf, action, method }) {
+  logout({ action }) {
     return axios.request({
-      method,
+      method: "POST",
       url: action,
       withCredentials: true,
-      data: {
-        username,
-        password,
-      },
     });
   }
 }

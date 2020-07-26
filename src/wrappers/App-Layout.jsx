@@ -10,7 +10,10 @@ import {
   ListItemText,
   List,
   ListItem,
+  Backdrop,
+  CircularProgress,
 } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
 import avatartImg from "../static/images/ai-user.jpg";
 import {
   Menu,
@@ -27,6 +30,11 @@ import {
   Feedback,
   ExitToApp,
 } from "@material-ui/icons";
+import { useHistory } from "react-router-dom";
+import SnackErr from "../components/Snack-bar-custom";
+import { authEvents } from "../store/actions/pages";
+
+import { connect } from "react-redux";
 const { useEffect, useState } = React;
 
 const siteNavigation = [
@@ -151,11 +159,22 @@ const SIDEBAR = (props) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
 
+  const router = useHistory();
+
+  const [DROP_BACK, SET_DROP_BACK] = useState(false);
+
+  const [ERR, SET_ERR] = useState(null);
+
   const handleClick = (ev) => {
     setAnchorEl(ev.currentTarget);
   };
 
   const handleClose = () => setAnchorEl(null);
+
+  const onLogOut = () => {
+    props.dispatch(authEvents.AUTH_LOGOUT_FN());
+    SET_DROP_BACK(true);
+  };
 
   const dropdownMenuItems = [
     {
@@ -165,10 +184,26 @@ const SIDEBAR = (props) => {
     },
     {
       title: "logout",
-      evt: () => console.log("cliecked"),
+      evt: () => onLogOut(),
       icon: ExitToApp,
     },
   ];
+
+  useEffect(() => {
+    if (props.auth && props.auth.logoutLoad) {
+      props.dispatch(authEvents.AUTH_LOGOUT());
+    }
+  }, [props.auth && props.auth.logoutLoad]);
+
+  useEffect(() => {
+    if (props.auth && props.auth.logoutLoad && !props.auth.user) {
+      router.push("/login");
+    }
+
+    if (props.auth && props.auth.logoutLoad && props.auth.logoutFail) {
+      SET_ERR(props.auth.logoutFail);
+    }
+  }, [props]);
 
   const {
     userImg,
@@ -180,8 +215,19 @@ const SIDEBAR = (props) => {
     userImgDockMode,
     topBarDock,
   } = styles({ sideBarSize: dockMode ? "75px" : "200px" });
+  if (!props.dispatch) {
+    return <Skeleton variant="rect" height="100vh" />;
+  }
   return (
     <Box className={sideBar}>
+      {DROP_BACK ? (
+        <Backdrop open={true}>
+          <CircularProgress color="primary" />
+        </Backdrop>
+      ) : null}
+      {Boolean(ERR) ? (
+        <SnackErr title={ERR} variant="filled" severity="error" />
+      ) : null}
       <Box
         position="fixed"
         className={sideBarFakeElement + " " + "width-slide-effect"}
@@ -280,13 +326,12 @@ const SIDEBAR = (props) => {
 
 const APP_LAYOUT = (props) => {
   const { Root, content } = styles();
-
   return (
     <Box className={Root}>
-      <SIDEBAR />
+      <SIDEBAR {...props} />
       <Box className={content}>{props.children}</Box>
     </Box>
   );
 };
 
-export default APP_LAYOUT;
+export default connect((st) => st)(APP_LAYOUT);

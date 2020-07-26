@@ -9,6 +9,8 @@ export const AUTH_TRUSY = "AUTH_LOGIN";
 export const AUTH_JWT = "AUTH_JWT";
 export const AUTH_USER = "AUTH_USER";
 export const AUTH_LOGOUT = "AUTH_LOGOUT";
+export const AUTH_LOGOUT_FAIL = "AUTH_LOGOUT_FAIL";
+export const AUTH_LOGOUT_LOAD = "AUTH_LOGOUT_LOAD";
 
 // entites count
 export const ENTITIES_COUNT_LOAD = "ENTITIES_COUNT_LOAD";

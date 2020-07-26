@@ -23,81 +23,11 @@ import {
   makeStyles,
   Grid,
 } from "@material-ui/core";
-import { DataUsage, MobileScreenShare } from "@material-ui/icons";
 import { connect } from "react-redux";
+
 import { indexEvents } from "../../store/actions/pages";
 
-const Circles = [
-  {
-    title: "errors",
-    count: 0,
-    icon: Error,
-    color: "#E91E63",
-  },
-  {
-    title: "web usage",
-    count: 30,
-    icon: DataUsage,
-    color: "#3F51B5",
-  },
-  {
-    title: "mobile usage",
-    count: 5000,
-    icon: MobileScreenShare,
-    color: "#009688",
-  },
-  {
-    title: "feedbacks",
-    count: 5,
-    icon: Feedback,
-    color: "#03A9F4",
-  },
-];
-
-const roundedBoxes = [
-  {
-    title: "admins",
-    count: 2,
-    icon: Edit,
-    color: "#E91E63",
-  },
-  {
-    title: "users",
-    count: 2,
-    icon: AccountBox,
-    color: "#3F51B5",
-  },
-  {
-    title: "roles",
-    count: 3,
-    icon: Lock,
-    color: "#3F51B5",
-  },
-  {
-    title: "faqs",
-    count: 8,
-    icon: Help,
-    color: "#FFC107",
-  },
-  {
-    title: "cities",
-    count: 8,
-    icon: LocationOn,
-    color: "#607D8B",
-  },
-  {
-    title: "stations",
-    count: 20,
-    icon: Policy,
-    color: "#03A9F4",
-  },
-  {
-    title: "http",
-    count: 20000,
-    icon: Speed,
-    color: "#2d3436",
-  },
-];
+import SnackErr from "../../components/Snack-bar-custom";
 
 const styles = makeStyles((df) => ({
   UsernameSpanColor: {
@@ -125,11 +55,14 @@ const DashHome = (props) => {
   const [circlesEntitesLoad, setCirclesEntitesLoad] = useState(false);
   const [roundedEntities, setRoundedEntities] = useState(null);
   const [roundedEntitiesLoad, setRoundedEntitiesLoad] = useState(false);
+  const [ERR, SET_ERR] = useState(null);
+
   useEffect(() => {
-    if ((props.auth.authenticated, props.auth.META_JWT_KEY)) {
-      props.dispatch(indexEvents.ENTITIES_COUNTS_FN(props.auth.META_JWT_KEY));
+    if (props.auth.user) {
+      props.dispatch(indexEvents.ENTITIES_COUNTS_FN());
     }
-  }, [props.auth.META_JWT_KEY]);
+  }, [props.auth.user]);
+
   useEffect(() => {
     if (props.index.entites) {
       const CirclesKeys = ["ERORRS", "FEEDBACKS"];
@@ -182,10 +115,19 @@ const DashHome = (props) => {
       }
     }
   }, [props.index]);
-  //useEffect(() => {}, [props]);
+
+  useEffect(() => {
+    if (props.index.entitesLoad && props.index.entitesFail) {
+      SET_ERR(props.indexEvents.entitesFail);
+    }
+  }, [props.index.entitesFail]);
+
   const { root } = styles();
   return (
     <Layout>
+      {Boolean(ERR) ? (
+        <SnackErr title={ERR} variant="filled" severity="error" />
+      ) : null}
       <Box className={root}>
         <Container>
           <DashWelcomeHeader />
@@ -213,7 +155,7 @@ const DashHome = (props) => {
                     );
                   })
                 : [0, 1, 2, 3].map((i) => (
-                    <Grid item xs={3}>
+                    <Grid item xs={3} key={`skeleton-circle-loader-key${i}`}>
                       <Skeleton
                         key={`key-of-skeletor-${i}`}
                         variant="circle"

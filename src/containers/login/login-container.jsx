@@ -66,12 +66,8 @@ const Login = (props) => {
       const dispatcher = props.dispatch;
 
       dispatcher(authEvents.AUTH_TRUSY(true));
-      dispatcher(authEvents.AUTH_JWT(loginClientResult.data.token));
       dispatcher(authEvents.AUTH_USER(loginClientResult.data.user));
 
-      if (!localStorage.getItem("META-JWT-KEY")) {
-        localStorage.setItem("META-JWT-KEY", loginClientResult.data.token);
-      }
       router.push("/home");
       return;
     } catch (e) {
@@ -84,26 +80,22 @@ const Login = (props) => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("META-JWT-KEY");
-    if (token) {
-      props.dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
-      props.dispatch(commonly.CHECK_JWT_TOKEN_FN(token));
-    }
-    if (!token) {
-      setLoading(false);
-    }
+    props.dispatch(commonly.CHECK_JWT_TOKEN_FN());
   }, []);
 
   useEffect(() => {
-    if (props.auth.authenticated && props.auth.user) {
+    if (props.auth.jwtCheckerLoad && props.auth.user) {
       router.push("/home");
+    }
+
+    if (!props.auth.user && props.jwtCheckerLoad === null) {
+      setLoading(false);
     }
   }, [props.auth]);
 
   useEffect(() => {
     if (props.auth.jwtCheckerFail) {
       setErr(true);
-      //props.dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
       setLoading(false);
     }
   }, [props.auth.jwtCheckerFail]);
