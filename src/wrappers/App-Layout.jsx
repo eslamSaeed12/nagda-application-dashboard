@@ -13,6 +13,7 @@ import {
   Backdrop,
   CircularProgress,
 } from "@material-ui/core";
+import clsx from "clsx";
 import { Skeleton } from "@material-ui/lab";
 import avatartImg from "../static/images/ai-user.jpg";
 import {
@@ -151,6 +152,23 @@ const styles = makeStyles((df) => {
       overflowY: "scroll",
       overflowX: "hidden",
     },
+    customScrollbarStyle: {
+      "&::-webkit-scrollbar": {
+        width: "12px",
+      },
+      "&::-webkit-scrollbar-track": {
+        "&::-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.3)",
+        background: "#f1f1f1",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        borderRadius: "10px",
+        "&::-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.5)",
+        background: df.palette.warning.light,
+        "&:hover": {
+          background: df.palette.warning.main,
+        },
+      },
+    },
   };
 });
 
@@ -211,10 +229,11 @@ const SIDEBAR = (props) => {
     userImgWrapper,
     topBar,
     topBarIconButton,
+    customScrollbarStyle,
     sideBarFakeElement,
     userImgDockMode,
     topBarDock,
-  } = styles({ sideBarSize: dockMode ? "75px" : "200px" });
+  } = styles({ sideBarSize: dockMode ? "70px" : "200px" });
   if (!props.dispatch) {
     return <Skeleton variant="rect" height="100vh" />;
   }
@@ -230,7 +249,11 @@ const SIDEBAR = (props) => {
       ) : null}
       <Box
         position="fixed"
-        className={sideBarFakeElement + " " + "width-slide-effect"}
+        className={clsx(
+          sideBarFakeElement,
+          "width-slide-effect",
+          customScrollbarStyle
+        )}
       >
         <Box className={dockMode ? topBarDock : topBar} mt={2} px={1}>
           <Button

@@ -1,6 +1,5 @@
-import axios from "axios";
-
-class client {
+import axios from 'axios'
+class CommonlySerivces {
   counts({ action }) {
     return axios.request({
       method: "POST",
@@ -10,4 +9,4 @@ class client {
   }
 }
 
-export default new client();
+export default new CommonlySerivces();

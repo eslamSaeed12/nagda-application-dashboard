@@ -1,5 +1,3 @@
-import CHECK_JWT_TOKEN_CLIENT from "../../js/clients/check-jwt-token";
-import { constants } from "../../js/constants.json";
 import {
   CHECK_JWT_USER_LOAD,
   CHECK_JWT_USER_FAIL,
@@ -13,31 +11,31 @@ import {
   AUTH_LOGOUT_FAIL,
   AUTH_LOGOUT_LOAD,
 } from "./names";
-import counter from "../../js/clients/counter-client";
-import LOGOUT_CLIENT from "../../js/clients/logout-client";
-
+import AuthServices from "../../js/clients/Auth-Services";
+import CommonServices from "../../js/clients/Common-Services";
+import AuthForms from "../../js/forms/Auth";
+import CommonForms from "../../js/forms/Common";
 export const commonly = {
   CHECK_JWT_TOKEN_LOAD: (payload) => ({ type: CHECK_JWT_USER_LOAD, payload }),
   CHECK_JWT_TOKEN_FAIL: (payload) => ({ type: CHECK_JWT_USER_FAIL, payload }),
   CHECK_JWT_TOKEN_FN: () => {
     return (dispatch) => {
       dispatch(commonly.CHECK_JWT_TOKEN_LOAD(false));
-      CHECK_JWT_TOKEN_CLIENT.check({
-        action: constants["api-host"] + "/auth/who-me",
-      })
+      AuthServices.check(AuthForms.check)
         .then((e) => {
           // assign user data
           dispatch(commonly.CHECK_JWT_TOKEN_DT(e.data.body));
           dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
         })
         .catch((err) => {
-          dispatch(
-            commonly.CHECK_JWT_TOKEN_FAIL(
-              JSON.parse(err.request.response).msg ||
-                err.response.msg ||
-                err.message
-            )
-          );
+          if (err.response) {
+            dispatch(
+              commonly.CHECK_JWT_TOKEN_FAIL(err.response.msg || err.message)
+            );
+          } else {
+            dispatch(commonly.CHECK_JWT_TOKEN_FAIL(err.message));
+          }
+
           dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
         });
     };
@@ -59,9 +57,7 @@ export const authEvents = {
   AUTH_LOGOUT_FN: () => {
     return (dispatch) => {
       dispatch(authEvents.AUTH_LOGOUT_LOAD(false));
-      LOGOUT_CLIENT.logout({
-        action: constants["api-host"] + "/auth/logout",
-      })
+      AuthServices.logout(AuthForms.Logout)
         .then((e) => {
           dispatch(authEvents.AUTH_LOGOUT_LOAD(true));
         })
@@ -82,10 +78,7 @@ export const indexEvents = {
   ENTITIES_COUNTS_FN: () => {
     return (dispatch) => {
       dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(false));
-      counter
-        .counts({
-          action: constants["api-host"] + "/misc/entites-counter",
-        })
+      CommonServices.counts(CommonForms.Counter)
         .then((e) => {
           dispatch(indexEvents.ENTITES_COUNTS_DT(e.data.body));
           dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));
@@ -93,9 +86,7 @@ export const indexEvents = {
         .catch((err) => {
           dispatch(
             indexEvents.ENTITES_COUNTS_FAIL(
-              JSON.parse(err.request.response).msg ||
-                err.response.data.msg ||
-                err.message
+              err.response.data.msg || err.message
             )
           );
           dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import LoginFormSchema from "../../js/validators/login-form";
-import loginClient from "../../js/clients/login-client";
-import { config as LOGIN_META_DATA } from "../../js/forms/login-form";
+import AuthClient from "../../js/clients/Auth-Services";
+import AuthForms from "../../js/forms/Auth";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers";
 import { connect } from "react-redux";
@@ -59,9 +59,9 @@ const Login = (props) => {
 
   const formSignIn = async (data) => {
     try {
-      const loginClientResult = await loginClient.login({
+      const loginClientResult = await AuthClient.login({
         ...data,
-        ...LOGIN_META_DATA,
+        ...AuthForms.Login,
       });
 
       const dispatcher = props.dispatch;

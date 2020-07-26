@@ -43,9 +43,14 @@ const DashWelcomeHeader = (props) => {
   const { UsernameSpanColor } = styles();
   return (
     <Box py={4}>
-      <Typography variant="h4" align="center">
-        welcome back <span className={UsernameSpanColor}>islam</span>
-      </Typography>
+      {props.isUserLoad ? (
+        <Typography variant="h4" align="center">
+          welcome back
+          <span className={UsernameSpanColor}> {props.username} </span>
+        </Typography>
+      ) : (
+        <Skeleton variant="text" width={200} style={{ margin: "0 auto" }} />
+      )}
     </Box>
   );
 };
@@ -130,7 +135,10 @@ const DashHome = (props) => {
       ) : null}
       <Box className={root}>
         <Container>
-          <DashWelcomeHeader />
+          <DashWelcomeHeader
+            isUserLoad={props.auth.jwtCheckerLoad}
+            username={props.auth.user.username}
+          />
           <Box mt={2} py={2}>
             <Typography
               align="center"

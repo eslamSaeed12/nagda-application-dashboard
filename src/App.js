@@ -4,7 +4,6 @@ import LoginContainer from "./containers/login/login-container";
 import DashHomeContainer from "./containers/home/dashboard-home-container";
 import ProfileContainer from "./containers/profile/profile-container";
 import UsersGridTable from "./containers/tables/users/users-table";
-import Logout from "./containers/logout/logout-container";
 import {
   CssBaseline,
   createMuiTheme,
@@ -78,10 +77,6 @@ function App() {
             <Switch>
               <Route path="/login" exact={true}>
                 <LoginContainer />
-              </Route>
-
-              <Route path="/logout">
-                <Logout />
               </Route>
 
               <Route path="/profile">
