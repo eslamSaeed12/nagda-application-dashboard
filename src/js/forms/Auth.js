@@ -13,4 +13,8 @@ export default {
     method: "POST",
     action: `${constants["api-host"]}/auth/who-me`,
   },
+  confirm: {
+    method: "POST",
+    action: `${constants["api-host"]}/auth/confirm-user`,
+  },
 };

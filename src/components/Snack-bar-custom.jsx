@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import { Alert, AlertTitle } from "@material-ui/lab";
 import { Typography, makeStyles } from "@material-ui/core";
@@ -6,8 +6,8 @@ import { Typography, makeStyles } from "@material-ui/core";
 const styles = makeStyles((df) => ({
   whiteBtn: {
     backgroundColor: "#fff",
-    color: df.palette.error.main,
-    borderColor: df.palette.error.main,
+    color: (props) => df.palette[props.severity].main,
+    borderColor: (props) => df.palette[props.severity].main,
     "&:hover": {
       borderColor: "#ffff",
       color: "#ffff",
@@ -16,15 +16,22 @@ const styles = makeStyles((df) => ({
 }));
 
 function Alerto(props) {
-  const { whiteBtn } = styles();
+  const { whiteBtn } = styles({ severity: props.severity });
+
   return (
     <Alert
-      style={props.style}
       className={props.className}
       elevation={props.shadows}
       variant={props.variant}
       severity={props.severity}
-      style={{ textAlign: "center" }}
+      style={{
+        textAlign: "center",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        ...props.style,
+      }}
     >
       <AlertTitle>{props.title}</AlertTitle>
       {props.content ? (

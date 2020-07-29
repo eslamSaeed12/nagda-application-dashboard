@@ -10,6 +10,7 @@ import {
   ThemeProvider,
   StylesProvider,
 } from "@material-ui/core";
+
 import "./static/sass/main.scss";
 
 const overridedTheme = createMuiTheme({
