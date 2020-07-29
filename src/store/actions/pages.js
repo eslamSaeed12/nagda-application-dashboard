@@ -37,10 +37,14 @@ export const commonly = {
           dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
         })
         .catch((err) => {
+          const msg =
+            err.response && err.response.msg
+              ? err.response.msg
+              : err.request.response
+              ? JSON.parse(err.request.response).msg
+              : err.message;
           if (err.response) {
-            dispatch(
-              commonly.CHECK_JWT_TOKEN_FAIL(err.response.msg || err.message)
-            );
+            dispatch(commonly.CHECK_JWT_TOKEN_FAIL(msg));
           } else {
             dispatch(commonly.CHECK_JWT_TOKEN_FAIL(err.message));
           }
@@ -70,8 +74,14 @@ export const authEvents = {
         .then((e) => {
           dispatch(authEvents.AUTH_LOGOUT_LOAD(true));
         })
-        .catch((er) => {
-          dispatch(authEvents.AUTH_LOGOUT_FAIL(er.response.msg || er.message));
+        .catch((err) => {
+          const msg =
+            err.response && err.response.msg
+              ? err.response.msg
+              : err.request.response
+              ? JSON.parse(err.request.response).msg
+              : err.message;
+          dispatch(authEvents.AUTH_LOGOUT_FAIL(msg));
           dispatch(authEvents.AUTH_LOGOUT_LOAD(true));
         });
     };
@@ -93,11 +103,13 @@ export const indexEvents = {
           dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));
         })
         .catch((err) => {
-          dispatch(
-            indexEvents.ENTITES_COUNTS_FAIL(
-              err.response.data.msg || err.message
-            )
-          );
+          const msg =
+            err.response && err.response.msg
+              ? err.response.msg
+              : err.request.response
+              ? JSON.parse(err.request.response).msg
+              : err.message;
+          dispatch(indexEvents.ENTITES_COUNTS_FAIL(msg));
           dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));
         });
     };
@@ -131,10 +143,13 @@ export const profileEvents = {
           dispatch(profileEvents.UPDATE_PROFILE_LOAD_EV(true));
         })
         .catch((err) => {
-          const req = JSON.parse(err.request.response).msg;
-          dispatch(
-            profileEvents.UPDATE_PROFILE_FAIL_EV(err.response.msg || req || err.message)
-          );
+          const msg =
+            err.response && err.response.msg
+              ? err.response.msg
+              : err.request.response
+              ? JSON.parse(err.request.response).msg
+              : err.message;
+          dispatch(profileEvents.UPDATE_PROFILE_FAIL_EV(msg));
           dispatch(profileEvents.UPDATE_PROFILE_LOAD_EV(true));
         });
     };
@@ -166,14 +181,13 @@ export const confirmation = {
           dispatch(confirmation.CONFIRMATION_PROCESS_FAIL_EV(null));
         })
         .catch((err) => {
-          const reqMsg = JSON.parse(err.request.response)
-            ? JSON.parse(err.request.response).msg
-            : err.message;
-          dispatch(
-            confirmation.CONFIRMATION_PROCESS_FAIL_EV(
-              err.response.msg || reqMsg
-            )
-          );
+          const msg =
+            err.response && err.response.msg
+              ? err.response.msg
+              : err.request.response
+              ? JSON.parse(err.request.response).msg
+              : err.message;
+          dispatch(confirmation.CONFIRMATION_PROCESS_FAIL_EV(msg));
           dispatch(confirmation.CONFIRMATION_PROCESS_LOAD_EV(true));
         });
     };

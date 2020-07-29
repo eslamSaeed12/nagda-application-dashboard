@@ -71,14 +71,14 @@ const Login = (props) => {
 
       router.push("/home");
       return;
-    } catch (e) {
-      if (e.response) {
-        setErr(
-          e.response.data.msg || JSON.parse(e.request.response).msg || e.message
-        );
-      } else {
-        setErr(e.message);
-      }
+    } catch (err) {
+      const msg =
+        err.response && err.response.msg
+          ? err.response.msg
+          : err.request.response
+          ? JSON.parse(err.request.response).msg
+          : err.message;
+      setErr(msg);
     }
   };
 
@@ -98,7 +98,6 @@ const Login = (props) => {
 
   useEffect(() => {
     if (props.auth.jwtCheckerFail) {
-      setErr(true);
       setLoading(false);
     }
   }, [props.auth.jwtCheckerFail]);
@@ -118,11 +117,12 @@ const Login = (props) => {
           }}
         >
           <Alerto
-            title={props.auth.jwtCheckerFail || Err}
+            title={Err}
             variant="filled"
             severity="error"
             shadows={12}
             onClick={() => setErr(null)}
+            style={{ alignItems: "flex-start" }}
           />
         </Box>
       ) : null}
