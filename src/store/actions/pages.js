@@ -43,12 +43,7 @@ export const commonly = {
               : err.request.response
               ? JSON.parse(err.request.response).msg
               : err.message;
-          if (err.response) {
-            dispatch(commonly.CHECK_JWT_TOKEN_FAIL(msg));
-          } else {
-            dispatch(commonly.CHECK_JWT_TOKEN_FAIL(err.message));
-          }
-
+          dispatch(commonly.CHECK_JWT_TOKEN_FAIL(msg));
           dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
         });
     };

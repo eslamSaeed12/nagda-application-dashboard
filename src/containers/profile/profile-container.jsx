@@ -123,7 +123,6 @@ const ConfirmPasswordComponent = (props) => {
     },
   });
 
-
   const { errorText } = styles();
 
   return (
@@ -241,8 +240,10 @@ const Profile = (props) => {
 
   useEffect(() => {
     if (props.profile.update_profile_updated_data) {
-      props.dispatch(authEvents.AUTH_USER(props.profile.update_profile_updated_data))
-      console.log(props.profile.update_profile_updated_data)
+      props.dispatch(
+        authEvents.AUTH_USER(props.profile.update_profile_updated_data)
+      );
+      console.log(props.profile.update_profile_updated_data);
       SET_BACK_DROP(false);
       setSuccessUpdate(true);
     }
@@ -431,4 +432,6 @@ const WithAppLayout = (props) => {
   );
 };
 
-export default connect((state) => state)(Auth(WithAppLayout));
+export default connect((state) => state)(
+  Auth(WithAppLayout, ["owner", "admin"])
+);

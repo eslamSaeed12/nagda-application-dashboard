@@ -68,7 +68,8 @@ const gridTables = [
   },
 ];
 
-function App() {
+function App(props) {
+  console.log(props, "tt");
   return (
     <React.Fragment>
       <StylesProvider injectFirst>

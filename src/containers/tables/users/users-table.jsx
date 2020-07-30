@@ -146,4 +146,4 @@ const UsersGridTable = (props) => {
   );
 };
 
-export default connect((st) => st)(Auth(UsersGridTable));
+export default connect((st) => st)(Auth(UsersGridTable, ["owner"]));

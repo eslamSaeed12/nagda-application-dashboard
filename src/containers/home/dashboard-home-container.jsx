@@ -70,10 +70,11 @@ const DashHome = (props) => {
 
   useEffect(() => {
     if (props.index.entites) {
-      const CirclesKeys = ["ERORRS", "FEEDBACKS"];
+      const CirclesKeys = ["ERORRS", "FEEDBACKS", "HTTPS"];
       const circlesIcons = [
         { name: "ERORRS", icon: Error },
         { name: "FEEDBACKS", icon: Feedback },
+        { name: "HTTPS", icon: Speed },
       ];
       const roundedKeys = [
         "USERS",
@@ -82,7 +83,6 @@ const DashHome = (props) => {
         "FAQS",
         "CITIES",
         "STATIONS",
-        "HTTPS",
       ];
       const roundedIcons = [
         { name: "USERS", icon: AccountBalance },
@@ -91,7 +91,6 @@ const DashHome = (props) => {
         { name: "FAQS", icon: Help },
         { name: "CITIES", icon: LocationOn },
         { name: "STATIONS", icon: Policy },
-        { name: "HTTPS", icon: Speed },
       ];
       if (props.index.entitesLoad && props.index.entites) {
         const circlesEntitesMapped = props.index.entites
@@ -215,4 +214,4 @@ const DashHome = (props) => {
   );
 };
 
-export default connect((state) => state)(Auth(DashHome));
+export default connect((state) => state)(Auth(DashHome, ["owner", "admin"]));
