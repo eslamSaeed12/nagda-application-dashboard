@@ -7,6 +7,7 @@ import UsersGridTable from "./containers/tables/users/users-table";
 import FaqsGridTable from "./containers/tables/faqs/faqs-table";
 import RolesGridTable from "./containers/tables/roles/roles-table";
 import FeedbackGridTable from "./containers/tables/feedbacks/feedbacks-table";
+import StationsGridTable from "./containers/tables/stations/stations-table";
 
 import {
   CssBaseline,
@@ -81,6 +82,10 @@ const gridTables = [
   {
     path: "/feedbacks",
     component: FeedbackGridTable,
+  },
+  {
+    path: "/stations",
+    component: StationsGridTable,
   },
 ];
 
