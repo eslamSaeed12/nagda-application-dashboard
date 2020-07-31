@@ -17,52 +17,17 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import Layout from "../../../wrappers/App-Layout";
-import usersImg from "../../../static/images/undraw_people_tax5.svg";
+import questionImg from "../../../static/images/undraw_questions_75e0.svg";
 import Instructions from "../../../components/instructions-list";
 import { DataManagerStarter } from "../../../components/data-manager-starter";
-import UserServices from "../../../js/clients/Users-services";
+import faqsServices from "../../../js/clients/Faqs-services";
 import {
-  create_user,
-  update_user,
-} from "../../../js/validators/user-validtors";
+  create_faq,
+  update_faq,
+  delete_faq,
+} from "../../../js/validators/faqs-validators";
 import moment from "moment";
-const Table = (props) => {
-  const columns = [
-    {
-      title: "_id",
-      field: "_id",
-      hidden: true,
-    },
-    {
-      title: "username",
-      field: "username",
-    },
-    {
-      title: "email",
-      field: "email",
-    },
-    {
-      title: "password",
-      field: "NewPassword",
-    },
-    {
-      title: "OriginalPassword",
-      field: "password",
-      hidden: true,
-      readOnly: true,
-    },
-    {
-      title: "created since",
-      field: "createdAt",
-      readOnly: true,
-    },
-  ];
-  const [Dt, setData] = React.useState(props.data);
-
-  return (
-    <MaterialTable title="users table" columns={columns} data={Dt} {...props} />
-  );
-};
+import faqs from "../../../js/forms/faqs";
 
 const styles = makeStyles((df) => ({
   img: {
@@ -86,61 +51,71 @@ const styles = makeStyles((df) => ({
 
 const instructionsList = [
   {
-    title: "username",
+    title: "title",
     instructions: [
-      "should be a 6 - 16 length",
+      "should be a 30 - 255 length",
       "should not contain a spechials chars",
     ],
   },
   {
-    title: "password",
-    instructions: [
-      "should be a 8 - 18 length",
-      "should contain one uppercase letter at least",
-      "should contain one lowercase letter at least",
-      "should contain one spechial character at least",
-    ],
-  },
-  {
-    title: "email",
-    instructions: [
-      "should be a valid email to receive an email conirmation message",
-    ],
+    title: "description",
+    instructions: ["should be a 30 - 2000 length"],
   },
 ];
 
-const UsersGridTable = (props) => {
+const Table = (props) => {
+  const columns = [
+    {
+      title: "_id",
+      field: "_id",
+      hidden: true,
+    },
+    {
+      title: "title",
+      field: "title",
+    },
+    {
+      title: "description",
+      field: "description",
+    },
+    {
+      title: "created since",
+      field: "createdAt",
+      readOnly: true,
+    },
+  ];
+
+  return <MaterialTable title="faqs table" columns={columns} {...props} />;
+};
+
+const FaqsGridTable = (props) => {
   const [openModal, setOpenModal] = React.useState(false);
   const handleModelTrigger = () => setOpenModal(!openModal);
   const handleModalClose = () => setOpenModal(false);
   const [REQUEST_DONE, SET_REQUEST_DONE] = useState(false);
   const [REQUEST_FAIL, SET_REQUEST_FAIL] = useState(null);
   const [validationErrors, SetvalidationErrors] = useState(null);
-  const [Users, setUsers] = useState([]);
+  const [Faqs, setFaqs] = useState([]);
 
   const { img } = styles();
 
   const editableFunctions = {
     onRowAdd: (newData) => {
       return new Promise((resolve, reject) => {
-        newData.password = newData.NewPassword;
-        const omitted = _.pull(newData, ["username", "email", "password"]);
-        _.unset(omitted, "NewPassword");
-        console.log(omitted);
+        const omitted = _.pull(newData, ["title", "description"]);
         setTimeout(() => {
-          create_user
-            .validate(omitted, {
-              strict: false,
-            })
+          create_faq
+            .validate(omitted)
             .then((vdata) => {
-              UserServices.create({ body: { ...vdata } })
+              faqsServices
+                .create({ body: { ...vdata } })
                 .then((clientData) => {
-                  const NewUserData = clientData.data.body;
-                  setUsers([
-                    ...Users,
+                  const newFaqData = clientData.data.body;
+                  setFaqs([
+                    ...Faqs,
                     {
-                      ...NewUserData,
-                      createdAt: moment(NewUserData.createdAt)
+                      ...newFaqData,
+                      createdAt: moment(newFaqData.createdAt)
                         .startOf("hour")
                         .fromNow(),
                     },
@@ -164,17 +139,30 @@ const UsersGridTable = (props) => {
     onRowDelete: (oldData) => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          const id = oldData._id || "0";
-          UserServices.delete({ body: { id } })
-            .then((clientDt) => {
-              let data = [...Users];
-              let index = oldData.tableData.id;
-              data.splice(index, 1);
-              setUsers([...data]);
+          const toBeDeleted = _.pull(oldData, ["_id"]);
+          toBeDeleted.id = oldData._id;
+          _.unset(toBeDeleted, "_id");
+          delete_faq
+            .validate(toBeDeleted)
+            .then((vdata) => {
+              faqsServices
+                .delete({ body: { id: vdata.id } })
+                .then((clientDt) => {
+                  let data = [...Faqs];
+                  let index = oldData.tableData.id;
+                  data.splice(index, 1);
+                  setFaqs([...data]);
+                })
+                .catch((clientErr) => {
+                  SetvalidationErrors([
+                    JSON.parse(clientErr.request.response).msg,
+                  ]);
+                });
             })
-            .catch((clientErr) => {
-              SetvalidationErrors([JSON.parse(clientErr.request.response).msg]);
+            .catch((vErr) => {
+              SetvalidationErrors(vErr);
             });
+
           resolve();
         }, 1000);
       });
@@ -183,38 +171,27 @@ const UsersGridTable = (props) => {
     onRowUpdate: (newData, oldData) => {
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          if (newData.NewPassword) {
-            newData.password = newData.NewPassword;
-          }
-          const omitted = _.omit(newData, [
-            "NewPassword",
-            "createdAt",
-            "updatedAt",
-            "__v",
-          ]);
+          const omitted = _.omit(newData, ["createdAt", "updatedAt", "__v"]);
           omitted.id = newData._id;
           _.unset(omitted, "_id");
-          if (oldData.password === omitted.password) {
-            _.unset(omitted, "password");
-          }
-          update_user
-            .validate({ ...omitted })
+          update_faq
+            .validate(omitted)
             .then((vdata) => {
-              UserServices.update({
-                body: { ...vdata },
-              })
+              faqsServices
+                .update({
+                  body: vdata,
+                })
                 .then((clientResponse) => {
-                  let data = [...Users];
+                  let data = [...Faqs];
                   let index = oldData.tableData.id;
-                  const updatedUser = clientResponse.data.body;
-                  data[index] = updatedUser;
+                  const updatedFaq = clientResponse.data.body;
+                  data[index] = updatedFaq;
                   data[index].createdAt = moment(data[index].createdAt)
                     .startOf("hour")
                     .fromNow();
-                  setUsers([...data]);
+                  setFaqs([...data]);
                 })
                 .catch((clientErr) => {
-                  console.error(clientErr);
                   const responseMsg =
                     clientErr.response && clientErr.response.msg
                       ? clientErr.response.msg
@@ -237,8 +214,10 @@ const UsersGridTable = (props) => {
     },
   };
   useEffect(() => {
-    UserServices.getAll()
+    faqsServices
+      .getAll()
       .then((e) => {
+        console.log(e.data.body);
         const convertTimeToMomment = (data) => {
           return data.map((dt) => {
             return {
@@ -248,14 +227,7 @@ const UsersGridTable = (props) => {
             };
           });
         };
-        const hidePasswords = (data) => {
-          return data.map((dt) => {
-            return {
-              ...dt,
-            };
-          });
-        };
-        setUsers(hidePasswords(convertTimeToMomment(e.data.body)));
+        setFaqs(convertTimeToMomment(e.data.body));
         SET_REQUEST_DONE(true);
       })
       .catch((err) => {
@@ -300,8 +272,8 @@ const UsersGridTable = (props) => {
         ) : null}
         <Box py={4}>
           <DataManagerStarter
-            title="users model management table"
-            img={usersImg}
+            title="faqs model management table"
+            img={questionImg}
             imgClass={img}
           />
           <Box mt={4} display="flex" flexDirection="column">
@@ -325,7 +297,7 @@ const UsersGridTable = (props) => {
               <Table
                 editable={editableFunctions}
                 isLoading={!REQUEST_DONE}
-                data={Users}
+                data={Faqs}
               />
             </Box>
           </Box>
@@ -335,4 +307,4 @@ const UsersGridTable = (props) => {
   );
 };
 
-export default connect((st) => st)(Auth(UsersGridTable, ["owner"]));
+export default connect((st) => st)(Auth(FaqsGridTable, ["owner", "admin"]));

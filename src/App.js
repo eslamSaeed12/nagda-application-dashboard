@@ -4,6 +4,7 @@ import LoginContainer from "./containers/login/login-container";
 import DashHomeContainer from "./containers/home/dashboard-home-container";
 import ProfileContainer from "./containers/profile/profile-container";
 import UsersGridTable from "./containers/tables/users/users-table";
+import FaqsGridTable from "./containers/tables/faqs/faqs-table";
 import {
   CssBaseline,
   createMuiTheme,
@@ -65,6 +66,10 @@ const gridTables = [
   {
     path: "/users",
     component: UsersGridTable,
+  },
+  {
+    path: "/faqs",
+    component: FaqsGridTable,
   },
 ];
 
