@@ -8,6 +8,8 @@ import FaqsGridTable from "./containers/tables/faqs/faqs-table";
 import RolesGridTable from "./containers/tables/roles/roles-table";
 import FeedbackGridTable from "./containers/tables/feedbacks/feedbacks-table";
 import StationsGridTable from "./containers/tables/stations/stations-table";
+import LogsGridTable from "./containers/tables/logs/logs-table.jsx";
+import ErorrsGridTable from "./containers/tables/errors/errors-table";
 
 import {
   CssBaseline,
@@ -87,10 +89,17 @@ const gridTables = [
     path: "/stations",
     component: StationsGridTable,
   },
+  {
+    path: "/logs",
+    component: LogsGridTable,
+  },
+  {
+    path: "/errors",
+    component: ErorrsGridTable,
+  },
 ];
 
 function App(props) {
-  console.log(props, "tt");
   return (
     <React.Fragment>
       <StylesProvider injectFirst>
