@@ -17,17 +17,16 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import Layout from "../../../wrappers/App-Layout";
-import questionImg from "../../../static/images/undraw_questions_75e0.svg";
+import securityImg from "../../../static/images/undraw_security_o890.svg";
 import Instructions from "../../../components/instructions-list";
 import { DataManagerStarter } from "../../../components/data-manager-starter";
-import faqsServices from "../../../js/clients/Faqs-services";
+import rolesServices from "../../../js/clients/roles-services";
 import {
-  create_faq,
-  update_faq,
-  delete_faq,
-} from "../../../js/validators/faqs-validators";
+  role_create,
+  role_update,
+  role_delete,
+} from "../../../js/validators/role-validator";
 import moment from "moment";
-import faqs from "../../../js/forms/faqs";
 
 const styles = makeStyles((df) => ({
   img: {
@@ -53,13 +52,11 @@ const instructionsList = [
   {
     title: "title",
     instructions: [
-      "should be a 30 - 255 length",
+      "should be a 4 - 30 length",
       "should not contain a spechials chars",
+      "should not contain a numbers",
+      "should not contain a spaces"
     ],
-  },
-  {
-    title: "description",
-    instructions: ["should be a 30 - 2000 length"],
   },
 ];
 
@@ -75,17 +72,13 @@ const Table = (props) => {
       field: "title",
     },
     {
-      title: "description",
-      field: "description",
-    },
-    {
       title: "created since",
       field: "createdAt",
       readOnly: true,
     },
   ];
 
-  return <MaterialTable title="faqs table" columns={columns} {...props} />;
+  return <MaterialTable title="roles table" columns={columns} {...props} />;
 };
 
 const FaqsGridTable = (props) => {
@@ -95,24 +88,24 @@ const FaqsGridTable = (props) => {
   const [REQUEST_DONE, SET_REQUEST_DONE] = useState(false);
   const [REQUEST_FAIL, SET_REQUEST_FAIL] = useState(null);
   const [validationErrors, SetvalidationErrors] = useState(null);
-  const [Faqs, setFaqs] = useState([]);
+  const [Roles, setRoles] = useState([]);
 
   const { img } = styles();
 
   const editableFunctions = {
     onRowAdd: (newData) => {
       return new Promise((resolve, reject) => {
-        const omitted = _.pull(newData, ["title", "description"]);
+        const omitted = _.pull(newData, ["title"]);
         setTimeout(() => {
-          create_faq
+          role_create
             .validate(omitted)
             .then((vdata) => {
-              faqsServices
+              rolesServices
                 .create({ body: { ...vdata } })
                 .then((clientData) => {
                   const newFaqData = clientData.data.body;
-                  setFaqs([
-                    ...Faqs,
+                  setRoles([
+                    ...Roles,
                     {
                       ...newFaqData,
                       createdAt: moment(newFaqData.createdAt)
@@ -142,16 +135,16 @@ const FaqsGridTable = (props) => {
           const toBeDeleted = _.pull(oldData, ["_id"]);
           toBeDeleted.id = oldData._id;
           _.unset(toBeDeleted, "_id");
-          delete_faq
+          role_delete
             .validate(toBeDeleted)
             .then((vdata) => {
-              faqsServices
+              rolesServices
                 .delete({ body: { id: vdata.id } })
                 .then((clientDt) => {
-                  let data = [...Faqs];
+                  let data = [...Roles];
                   let index = oldData.tableData.id;
                   data.splice(index, 1);
-                  setFaqs([...data]);
+                  setRoles([...data]);
                 })
                 .catch((clientErr) => {
                   SetvalidationErrors([
@@ -174,22 +167,22 @@ const FaqsGridTable = (props) => {
           const omitted = _.omit(newData, ["createdAt", "updatedAt", "__v"]);
           omitted.id = newData._id;
           _.unset(omitted, "_id");
-          update_faq
+          role_update
             .validate(omitted)
             .then((vdata) => {
-              faqsServices
+              rolesServices
                 .update({
                   body: vdata,
                 })
                 .then((clientResponse) => {
-                  let data = [...Faqs];
+                  let data = [...Roles];
                   let index = oldData.tableData.id;
                   const updatedFaq = clientResponse.data.body;
                   data[index] = updatedFaq;
                   data[index].createdAt = moment(data[index].createdAt)
                     .startOf("hour")
                     .fromNow();
-                  setFaqs([...data]);
+                  setRoles([...data]);
                 })
                 .catch((clientErr) => {
                   const responseMsg =
@@ -214,10 +207,9 @@ const FaqsGridTable = (props) => {
     },
   };
   useEffect(() => {
-    faqsServices
+    rolesServices
       .getAll()
       .then((e) => {
-        console.log(e.data.body);
         const convertTimeToMomment = (data) => {
           return data.map((dt) => {
             return {
@@ -227,7 +219,7 @@ const FaqsGridTable = (props) => {
             };
           });
         };
-        setFaqs(convertTimeToMomment(e.data.body));
+        setRoles(convertTimeToMomment(e.data.body));
         SET_REQUEST_DONE(true);
       })
       .catch((err) => {
@@ -272,8 +264,8 @@ const FaqsGridTable = (props) => {
         ) : null}
         <Box py={4}>
           <DataManagerStarter
-            title="faqs model management table"
-            img={questionImg}
+            title="roles model management table"
+            img={securityImg}
             imgClass={img}
           />
           <Box mt={4} display="flex" flexDirection="column">
@@ -290,14 +282,14 @@ const FaqsGridTable = (props) => {
             <Instructions
               open={openModal}
               onClose={handleModalClose}
-              title="faqs instructions"
+              title="roles instructions"
               instructionsList={instructionsList}
             />
             <Box maxWidth="100%" mt={4}>
               <Table
                 editable={editableFunctions}
                 isLoading={!REQUEST_DONE}
-                data={Faqs}
+                data={Roles}
               />
             </Box>
           </Box>
@@ -307,4 +299,4 @@ const FaqsGridTable = (props) => {
   );
 };
 
-export default connect((st) => st)(Auth(FaqsGridTable, ["owner", "admin"]));
+export default connect((st) => st)(Auth(FaqsGridTable, ["owner"]));
