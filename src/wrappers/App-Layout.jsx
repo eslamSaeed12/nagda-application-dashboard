@@ -96,6 +96,8 @@ const siteNavigation = [
   },
 ];
 
+const resrictedForNotOwner = ["settings", "admins", "roles", "users"];
+
 const styles = makeStyles((df) => {
   return {
     Root: {
@@ -308,7 +310,7 @@ const SIDEBAR = (props) => {
               align="center"
               className={`white-clr`}
             >
-              username
+              {props.auth.user.username}
             </Typography>
             <Typography
               variant="caption"
@@ -316,30 +318,54 @@ const SIDEBAR = (props) => {
               style={{ display: "block" }}
               className={`white-clr`}
             >
-              job title
+              {props.auth.user.role.title}
             </Typography>
           </Box>
         </Box>
         <Box mt={dockMode ? 0 : 3}>
           <List component="nav">
-            {siteNavigation.map((Li, index) => {
-              return (
-                <ListItem
-                  key={`li-nav-item${index}`}
-                  button
-                  component="a"
-                  href={Li.href}
-                >
-                  <ListItemIcon>
-                    <Li.icon className="white-clr" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={Li.title}
-                    className={`white-clr ${!dockMode ? "" : "invisible"}`}
-                  />
-                </ListItem>
-              );
-            })}
+            {props.auth.user.role.title === "owner"
+              ? siteNavigation.map((Li, index) => {
+                  return (
+                    <ListItem
+                      key={`li-nav-item${index}`}
+                      button
+                      component="a"
+                      href={Li.href}
+                    >
+                      <ListItemIcon>
+                        <Li.icon className="white-clr" />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={Li.title}
+                        className={`white-clr ${!dockMode ? "" : "invisible"}`}
+                      />
+                    </ListItem>
+                  );
+                })
+              : siteNavigation.map((Li, index) => {
+                  if (!resrictedForNotOwner.includes(Li.title)) {
+                    return (
+                      <ListItem
+                        key={`li-nav-item${index}`}
+                        button
+                        component="a"
+                        href={Li.href}
+                      >
+                        <ListItemIcon>
+                          <Li.icon className="white-clr" />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={Li.title}
+                          className={`white-clr ${
+                            !dockMode ? "" : "invisible"
+                          }`}
+                        />
+                      </ListItem>
+                    );
+                  }
+                })}
+            }
           </List>
         </Box>
       </Box>
