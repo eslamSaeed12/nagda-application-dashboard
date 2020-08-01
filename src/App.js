@@ -10,7 +10,7 @@ import FeedbackGridTable from "./containers/tables/feedbacks/feedbacks-table";
 import StationsGridTable from "./containers/tables/stations/stations-table";
 import LogsGridTable from "./containers/tables/logs/logs-table.jsx";
 import ErorrsGridTable from "./containers/tables/errors/errors-table";
-
+import AdminGridTable from "./containers/tables/admins/admins-table";
 import {
   CssBaseline,
   createMuiTheme,
@@ -96,6 +96,10 @@ const gridTables = [
   {
     path: "/errors",
     component: ErorrsGridTable,
+  },
+  {
+    path: "/admins",
+    component: AdminGridTable,
   },
 ];
 
