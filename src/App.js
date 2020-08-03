@@ -11,6 +11,12 @@ import StationsGridTable from "./containers/tables/stations/stations-table";
 import LogsGridTable from "./containers/tables/logs/logs-table.jsx";
 import ErorrsGridTable from "./containers/tables/errors/errors-table";
 import AdminGridTable from "./containers/tables/admins/admins-table";
+import CityMainPage from "./containers/tables/city/main-city";
+import NewCityPage from "./containers/tables/city/new-city";
+import EditCityPage from "./containers/tables/city/edit-city";
+import UnAuhtorized from "./containers/common/unAuhtorized";
+import BadRequest from "./containers/common/bad-request";
+import InternalServerError from "./containers/common/internal-server-error";
 import {
   CssBaseline,
   createMuiTheme,
@@ -101,6 +107,18 @@ const gridTables = [
     path: "/admins",
     component: AdminGridTable,
   },
+  {
+    path: "/cities",
+    component: CityMainPage,
+  },
+  {
+    path: "/city/new",
+    component: NewCityPage,
+  },
+  {
+    path: "/city/edit/:id",
+    component: EditCityPage,
+  },
 ];
 
 function App(props) {
@@ -126,6 +144,17 @@ function App(props) {
                   </Route>
                 );
               })}
+              <Route path="/un-authorized">
+                <UnAuhtorized />
+              </Route>
+
+              <Route path="/bad-request/:error">
+                <BadRequest />
+              </Route>
+              
+              <Route path="/server-down">
+                <InternalServerError />
+              </Route>
 
               <Route path="/">
                 <DashHomeContainer />

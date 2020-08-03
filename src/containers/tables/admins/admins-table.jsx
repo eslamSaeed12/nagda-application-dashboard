@@ -358,7 +358,7 @@ const FaqsGridTable = (props) => {
         ) : null}
         <Box py={4}>
           <DataManagerStarter
-            title="roles model management table"
+            title="cities model management table"
             img={adminImg}
             imgClass={img}
           />

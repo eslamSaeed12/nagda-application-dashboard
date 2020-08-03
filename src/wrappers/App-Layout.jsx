@@ -199,7 +199,7 @@ const SIDEBAR = (props) => {
   const dropdownMenuItems = [
     {
       title: "profile",
-      evt: () => console.log("cliecked"),
+      evt: () => router.push('/profile'),
       icon: AccountBox,
     },
     {
@@ -330,8 +330,8 @@ const SIDEBAR = (props) => {
                     <ListItem
                       key={`li-nav-item${index}`}
                       button
-                      component="a"
-                      href={Li.href}
+                      component={"a"}
+                      onClick={() => router.push(Li.href)}
                     >
                       <ListItemIcon>
                         <Li.icon className="white-clr" />
