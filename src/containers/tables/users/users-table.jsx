@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import Auth from "../../../wrappers/Auth-wrapper";
 import * as _ from "lodash";
+import Alerto from "../../../components/Snack-bar-custom";
 import { connect } from "react-redux";
 import {
   Box,
@@ -146,12 +147,27 @@ const UsersGridTable = (props) => {
                   ]);
                 })
                 .catch((clientErr) => {
+                  if (process.env.NODE_ENV === "development") {
+                    console.error(clientErr);
+                  }
+                  const responseMsg =
+                    clientErr.response && clientErr.response.data
+                      ? clientErr.response.data.msg
+                      : null;
+                  const requestMsg =
+                    clientErr.request && clientErr.request.response
+                      ? JSON.parse(clientErr.request.response).msg
+                      : null;
+
                   SetvalidationErrors([
-                    JSON.parse(clientErr.request.response).msg,
+                    responseMsg ? responseMsg : requestMsg || clientErr.message,
                   ]);
                 });
             })
             .catch((err) => {
+              if (process.env.NODE_ENV === "development") {
+                console.error(err);
+              }
               SetvalidationErrors(err.errors);
             });
 
@@ -172,7 +188,21 @@ const UsersGridTable = (props) => {
               setUsers([...data]);
             })
             .catch((clientErr) => {
-              SetvalidationErrors([JSON.parse(clientErr.request.response).msg]);
+              if (process.env.NODE_ENV === "development") {
+                console.error(clientErr);
+              }
+              const responseMsg =
+                clientErr.response && clientErr.response.data
+                  ? clientErr.response.data.msg
+                  : null;
+              const requestMsg =
+                clientErr.request && clientErr.request.response
+                  ? JSON.parse(clientErr.request.response).msg
+                  : null;
+
+              SetvalidationErrors([
+                responseMsg ? responseMsg : requestMsg || clientErr.message,
+              ]);
             });
           resolve();
         }, 1000);
@@ -213,7 +243,10 @@ const UsersGridTable = (props) => {
                   setUsers([...data]);
                 })
                 .catch((clientErr) => {
-                  console.error(clientErr);
+                  if (process.env.NODE_ENV === "development") {
+                    console.error(clientErr);
+                  }
+
                   const responseMsg =
                     clientErr.response && clientErr.response.msg
                       ? clientErr.response.msg
@@ -228,6 +261,9 @@ const UsersGridTable = (props) => {
                 });
             })
             .catch((err) => {
+              if (process.env.NODE_ENV === "development") {
+                console.error(err);
+              }
               SetvalidationErrors(err.errors);
             });
           resolve();
@@ -269,6 +305,24 @@ const UsersGridTable = (props) => {
   return (
     <Layout>
       <Container>
+        {REQUEST_FAIL ? (
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="center"
+            position="fixed"
+            style={{ zIndex: 5599, bottom: "1rem" }}
+            width="100%"
+          >
+            <Alerto
+              title="Network error"
+              variant="filled"
+              severity="error"
+              content={REQUEST_FAIL}
+              onClick={() => SET_REQUEST_FAIL(null)}
+            />
+          </Box>
+        ) : null}
         {validationErrors ? (
           <Dialog open={true}>
             <DialogTitle>validation error</DialogTitle>

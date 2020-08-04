@@ -143,6 +143,7 @@ const styles = makeStyles((df) => {
     sideBar: {
       height: "100vh",
       width: (props) => props.sideBarSize,
+      zIndex: 99879,
     },
     sideBarFakeElement: {
       width: "inherit",
@@ -199,7 +200,7 @@ const SIDEBAR = (props) => {
   const dropdownMenuItems = [
     {
       title: "profile",
-      evt: () => router.push('/profile'),
+      evt: () => router.push("/profile"),
       icon: AccountBox,
     },
     {
@@ -301,7 +302,7 @@ const SIDEBAR = (props) => {
         </Box>
         <Box className={userImgWrapper}>
           <img
-            src={avatartImg}
+            src={props.auth.user.image_link}
             className={`${dockMode ? userImgDockMode : userImg}`}
           />
           <Box mt={1} className={` ${dockMode ? "invisible" : ""}`}>

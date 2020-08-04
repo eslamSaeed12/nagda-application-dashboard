@@ -4,7 +4,7 @@ export const create_city = yup.object({
   title: yup
     .string()
     .min(6)
-    .max(255)
+    .max(50)
     .matches(/^([a-zA-Z -]+)$/, {
       message: "please follow cicty model instrcutions",
     })
@@ -16,7 +16,7 @@ export const update_city = yup.object({
   title: yup
     .string()
     .min(6)
-    .max(255)
+    .max(50)
     .matches(/^([a-zA-Z -]+)$/, {
       message: "please follow cicty model instrcutions",
     }),

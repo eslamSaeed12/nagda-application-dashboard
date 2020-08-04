@@ -3,6 +3,7 @@ import Auth from "../../../wrappers/Auth-wrapper";
 import * as _ from "lodash";
 import { connect } from "react-redux";
 import MuiTable from "mui-datatables";
+import Alerto from '../../../components/Snack-bar-custom';
 import {
   Box,
   Container,
@@ -113,11 +114,29 @@ const FaqsGridTable = (props) => {
               // delete it from the data
             })
             .catch((clientErr) => {
-              SetvalidationErrors([clientErr.response.data.msg]);
+              if (process.env.NODE_ENV === "development") {
+                console.error(clientErr);
+              }
+
+              const responseMsg =
+                clientErr.response && clientErr.response.data
+                  ? clientErr.response.data.msg
+                  : null;
+              const requestMsg =
+                clientErr.request && clientErr.request.response
+                  ? JSON.parse(clientErr.request.response).msg
+                  : null;
+
+              SetvalidationErrors([
+                responseMsg ? responseMsg : requestMsg || clientErr.message,
+              ]);
               status = false;
             });
         })
         .catch((verr) => {
+          if (process.env.NODE_ENV === "development") {
+            console.error(verr);
+          }
           status = false;
           SetvalidationErrors(verr.errors);
         });
@@ -175,6 +194,25 @@ const FaqsGridTable = (props) => {
   return (
     <Layout>
       <Container>
+        {REQUEST_FAIL ? (
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="center"
+            position="fixed"
+            style={{ zIndex: 5599, bottom: "1rem" }}
+            width="100%"
+          >
+            <Alerto
+              title="Network error"
+              variant="filled"
+              severity="error"
+              content={REQUEST_FAIL}
+              onClick={() => SET_REQUEST_FAIL(null)}
+            />
+          </Box>
+        ) : null}
+
         <Dialog open={openStack}>
           <DialogTitle>stack</DialogTitle>
           <DialogContent>

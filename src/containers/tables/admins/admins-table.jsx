@@ -22,6 +22,7 @@ import Instructions from "../../../components/instructions-list";
 import { DataManagerStarter } from "../../../components/data-manager-starter";
 import adminServices from "../../../js/clients/admin-services";
 import roleServices from "../../../js/clients/roles-services";
+import Alerto from '../../../components/Snack-bar-custom';
 import {
   create_admin,
   delete_admin,
@@ -96,6 +97,10 @@ const columnsAsFunction = (lookup) => [
     field: "NewPassword",
   },
   {
+    title:"image link",
+    field:"image_link"
+  },
+  {
     title: "OriginalPassword",
     field: "password",
     hidden: true,
@@ -138,6 +143,7 @@ const FaqsGridTable = (props) => {
           "email",
           "password",
           "role",
+          "image_link"
         ]);
         _.unset(omitted, "NewPassword");
 
@@ -161,11 +167,28 @@ const FaqsGridTable = (props) => {
                   ]);
                 })
                 .catch((clientErr) => {
-                  console.log(Object.values(clientErr));
-                  SetvalidationErrors([clientErr.response.msg]);
+                  if (process.env.NODE_ENV === "development") {
+                    console.error(clientErr);
+                  }
+
+                  const responseMsg =
+                    clientErr.response && clientErr.response.data
+                      ? clientErr.response.data.msg
+                      : null;
+                  const requestMsg =
+                    clientErr.request && clientErr.request.response
+                      ? JSON.parse(clientErr.request.response).msg
+                      : null;
+
+                  SetvalidationErrors([
+                    responseMsg ? responseMsg : requestMsg || clientErr.message,
+                  ]);
                 });
             })
             .catch((err) => {
+              if (process.env.NODE_ENV === "development") {
+                console.error(err);
+              }
               SetvalidationErrors(err.errors);
             });
 
@@ -192,13 +215,28 @@ const FaqsGridTable = (props) => {
                   setAdmins([...data]);
                 })
                 .catch((clientErr) => {
+                  if (process.env.NODE_ENV === "development") {
+                    console.error(clientErr);
+                  }
+                  const responseMsg =
+                    clientErr.response && clientErr.response.data
+                      ? clientErr.response.data.msg
+                      : null;
+                  const requestMsg =
+                    clientErr.request && clientErr.request.response
+                      ? JSON.parse(clientErr.request.response).msg
+                      : null;
+
                   SetvalidationErrors([
-                    JSON.parse(clientErr.request.response).msg,
+                    responseMsg ? responseMsg : requestMsg || clientErr.message,
                   ]);
                 });
             })
             .catch((vErr) => {
-              SetvalidationErrors(vErr);
+              if (process.env.NODE_ENV === "development") {
+                console.error(vErr);
+              }
+              SetvalidationErrors(vErr.message);
             });
 
           resolve();
@@ -242,9 +280,13 @@ const FaqsGridTable = (props) => {
                   setAdmins([...data]);
                 })
                 .catch((clientErr) => {
+                  if (process.env.NODE_ENV === "development") {
+                    console.error(clientErr);
+                  }
+
                   const responseMsg =
-                    clientErr.response && clientErr.response.msg
-                      ? clientErr.response.msg
+                    clientErr.response && clientErr.response.data
+                      ? clientErr.response.data.msg
                       : null;
                   const requestMsg =
                     clientErr.request && clientErr.request.response
@@ -257,6 +299,9 @@ const FaqsGridTable = (props) => {
             })
             .catch((err) => {
               SetvalidationErrors(err.errors);
+              if (process.env.NODE_ENV === "development") {
+                console.error(err);
+              }
             });
           resolve();
         }, 1000);
@@ -328,6 +373,24 @@ const FaqsGridTable = (props) => {
   return (
     <Layout>
       <Container>
+      {REQUEST_FAIL ? (
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="center"
+            position="fixed"
+            style={{ zIndex: 5599, bottom: "1rem" }}
+            width="100%"
+          >
+            <Alerto
+              title="Network error"
+              variant="filled"
+              severity="error"
+              content={REQUEST_FAIL}
+              onClick={() => SET_REQUEST_FAIL(null)}
+            />
+          </Box>
+        ) : null}
         {validationErrors ? (
           <Dialog open={true}>
             <DialogTitle>validation error</DialogTitle>
@@ -358,7 +421,7 @@ const FaqsGridTable = (props) => {
         ) : null}
         <Box py={4}>
           <DataManagerStarter
-            title="cities model management table"
+            title="admin model management table"
             img={adminImg}
             imgClass={img}
           />

@@ -19,7 +19,7 @@ export const create_admin = yup.object({
       message: "please follow user model instructions",
     })
     .required(),
-
+  image_link: yup.string().url(),
   role: yup.string().length(24).required(),
 });
 
@@ -33,6 +33,7 @@ export const update_admin = yup.object({
       message: "please follow user model instructions",
     }),
   email: yup.string().email().required(),
+  image_link: yup.string().url(),
   password: yup
     .string()
     .min(8)

@@ -16,9 +16,10 @@ import {
   List,
   ListItemIcon,
   Backdrop,
+  IconButton,
   CircularProgress,
 } from "@material-ui/core";
-import { Error } from "@material-ui/icons";
+import { Error, RemoveRedEye } from "@material-ui/icons";
 
 import UpdateProfileValidator from "../../js/validators/profile-update";
 
@@ -103,6 +104,8 @@ const styles = makeStyles((df) => ({
 }));
 
 const ConfirmPasswordComponent = (props) => {
+  const [passwordType, setPasswordType] = useState(true);
+
   let {
     errors,
     values,
@@ -164,17 +167,23 @@ const ConfirmPasswordComponent = (props) => {
             name="id"
             value={props.state.auth.user._id}
           />
-          <Box>
+          <Box position="relative">
             <TextField
               variant="outlined"
               name="password"
               label="password"
-              type="password"
+              type={passwordType ? "password" : "text"}
               value={values.password}
               onChange={handleChange}
               error={errors.password ? true : false}
               helperText={errors.password ? errors.password : null}
             />
+            <IconButton
+              style={{ position: "absolute", right: "0rem" }}
+              onClick={() => setPasswordType(!passwordType)}
+            >
+              <RemoveRedEye />
+            </IconButton>
           </Box>
           <Button
             disabled={!isValid}
@@ -197,6 +206,7 @@ const Profile = (props) => {
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [BACK_DROP, SET_BACK_DROP] = useState(false);
   const [successUpdate, setSuccessUpdate] = useState(false);
+  const [passwordType, setPasswordType] = useState(true);
   const {
     handleSubmit,
     handleChange,
@@ -380,17 +390,23 @@ const Profile = (props) => {
                   <Skeleton variant="text" width={200} />
                 )}
               </Box>
-              <Box my={3}>
+              <Box my={3} position="relative">
                 <TextField
                   onChange={handleChange}
                   variant="standard"
                   label="password"
                   name="password"
-                  type="password"
+                  type={passwordType ? "password" : "text"}
                   value={values.password}
                   error={errors.password ? true : false}
                   helperText={errors.password ? errors.password : null}
                 />
+                <IconButton
+                  style={{ position: "absolute", right: "0rem" }}
+                  onClick={() => setPasswordType(!passwordType)}
+                >
+                  <RemoveRedEye />
+                </IconButton>
               </Box>
               <Box mt={3}>
                 <Button

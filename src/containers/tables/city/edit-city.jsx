@@ -78,13 +78,16 @@ const instructionsList = [
   {
     title: "title",
     instructions: [
-      "should be a 30 - 255 length",
-      "should not contain a spechials chars",
+      "should be a 6 - 50 length",
+      "should not contain a spechials chars except hypens (-) ",
     ],
   },
   {
-    title: "description",
-    instructions: ["should be a 30 - 2000 length"],
+    title: "stations",
+    instructions: [
+      "not required",
+      "should not add a station that exist in another city",
+    ],
   },
 ];
 
@@ -125,7 +128,20 @@ const CityEditContainer = (props) => {
             console.log(cityClientRes);
           })
           .catch((cityClientErr) => {
-            setValidationErr([cityClientErr.response.data.msg]);
+            if (process.env.NODE_ENV === "development") {
+              console.error(cityClientErr);
+            }
+            const responseMsg =
+              cityClientErr.response && cityClientErr.response.data
+                ? cityClientErr.response.data.msg
+                : null;
+            const requestMsg =
+              cityClientErr.request && cityClientErr.request.response
+                ? JSON.parse(cityClientErr.request.response).msg
+                : null;
+            setValidationErr([
+              responseMsg ? responseMsg : requestMsg || cityClientErr.message,
+            ]);
           });
       }
     },
@@ -188,12 +204,14 @@ const CityEditContainer = (props) => {
           setLoading(false);
         })
         .catch((clientErr) => {
+          if (process.env.NODE_ENV === "development") {
+            console.error(clientErr);
+          }
           const msg = Boolean(clientErr.response.data)
             ? Array.isArray(clientErr.response.data.msg)
               ? clientErr.response.data.msg[0]
               : clientErr.response.data.msg
             : clientErr.message;
-          //console.log(Object.values(clientErr));
           router.push(`/bad-request/${msg}`);
         });
     }

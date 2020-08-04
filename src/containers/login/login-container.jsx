@@ -10,6 +10,7 @@ import { authEvents } from "../../store/actions/pages";
 import { useHistory } from "react-router-dom";
 import { commonly } from "../../store/actions/pages";
 import Loader from "../../components/loader";
+import { ClipLoader } from "react-spinners";
 import {
   makeStyles,
   Box,
@@ -22,10 +23,11 @@ import {
   Chip,
   Checkbox,
   FormControlLabel,
+  IconButton,
 } from "@material-ui/core";
 import AppMockup from "../../static/images/Group 2 copy 2.svg";
 import clsx from "clsx";
-
+import { RemoveRedEye } from "@material-ui/icons";
 const styles = makeStyles((df) => ({
   root: {
     backgroundColor: "#ffff",
@@ -53,12 +55,15 @@ const Login = (props) => {
   const [loading, setLoading] = useState(true);
   const { root, mookUpWrapper, imgWrapper, paddingVertical } = styles();
   const [Err, setErr] = useState(null);
+  const [AuthLoading, setAuthLoading] = useState(false);
+  const [passwordType, setPasswordType] = useState(true);
   const { register, handleSubmit, errors } = useForm({
     resolver: yupResolver(LoginFormSchema),
   });
 
   const formSignIn = async (data) => {
     try {
+      setAuthLoading(true);
       const loginClientResult = await AuthClient.login({
         ...data,
         ...AuthForms.Login,
@@ -68,7 +73,7 @@ const Login = (props) => {
 
       dispatcher(authEvents.AUTH_TRUSY(true));
       dispatcher(authEvents.AUTH_USER(loginClientResult.data.user));
-
+      setAuthLoading(false);
       router.push("/home");
       return;
     } catch (err) {
@@ -79,6 +84,7 @@ const Login = (props) => {
           ? JSON.parse(err.request.response).msg
           : err.message;
       setErr(msg);
+      setAuthLoading(false);
     }
   };
 
@@ -183,11 +189,11 @@ const Login = (props) => {
                         }
                       />
                     </Box>
-                    <Box my={4} mx="auto">
+                    <Box my={4} mx="auto" position="realtive">
                       <TextField
                         inputRef={register}
                         fullWidth
-                        type="password"
+                        type={passwordType ? "password" : "text"}
                         variant="standard"
                         label="password"
                         name="password"
@@ -196,6 +202,12 @@ const Login = (props) => {
                           errors.password ? errors.password.message : null
                         }
                       />
+                      <IconButton
+                        style={{ position: "absolute", right: "4.5rem" }}
+                        onClick={() => setPasswordType(!passwordType)}
+                      >
+                        <RemoveRedEye />
+                      </IconButton>
                     </Box>
 
                     <Box my={3} mx="auto">
@@ -231,7 +243,7 @@ const Login = (props) => {
                         }}
                         className={clsx("white-clr", paddingVertical)}
                       >
-                        login
+                        {AuthLoading ? <ClipLoader /> : "login"}
                       </Button>
                     </Box>
                   </Box>

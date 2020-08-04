@@ -113,13 +113,28 @@ const CityGridTable = (props) => {
                   setCities([...data]);
                 })
                 .catch((clientErr) => {
+                  if (process.env.NODE_ENV === "development") {
+                    console.error(clientErr);
+                  }
+                  const responseMsg =
+                    clientErr.response && clientErr.response.data
+                      ? clientErr.response.data.msg
+                      : null;
+                  const requestMsg =
+                    clientErr.request && clientErr.request.response
+                      ? JSON.parse(clientErr.request.response).msg
+                      : null;
+
                   SetvalidationErrors([
-                    JSON.parse(clientErr.request.response).msg,
+                    responseMsg ? responseMsg : requestMsg || clientErr.message,
                   ]);
                 });
             })
             .catch((vErr) => {
-              SetvalidationErrors(vErr);
+              if (process.env.NODE_ENV === "development") {
+                console.error(vErr);
+              }
+              SetvalidationErrors(vErr.message);
             });
 
           resolve();
@@ -238,7 +253,7 @@ const CityGridTable = (props) => {
             <Box textAlign="center" className="uppercase">
               <Typography variant="h6">add new city</Typography>
               <Tooltip title="new City">
-                <Fab color="primary" onClick={()=> router.push('/city/new')}>
+                <Fab color="primary" onClick={() => router.push("/city/new")}>
                   <Add className="white-clr" />
                 </Fab>
               </Tooltip>
