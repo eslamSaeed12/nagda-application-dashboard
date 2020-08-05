@@ -366,7 +366,6 @@ const SIDEBAR = (props) => {
                     );
                   }
                 })}
-            }
           </List>
         </Box>
       </Box>
