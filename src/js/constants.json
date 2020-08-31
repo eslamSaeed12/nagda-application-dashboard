@@ -1,5 +1,8 @@
 {
   "constants": {
-    "api-host": "http://localhost:5000/cp/api"
+    "api-host": "http://localhost:5000/cp/api",
+    "env": {
+      "NODE_ENV": "production"
+    }
   }
 }
