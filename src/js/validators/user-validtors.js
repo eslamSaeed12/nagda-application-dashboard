@@ -19,6 +19,10 @@ export const create_user = yup.object({
       message: "please follow user model instructions",
     })
     .required(),
+  usage: yup.object({
+    web: yup.number().default(0),
+    mobile: yup.number().default(0),
+  }),
 });
 
 export const update_user = yup.object({
@@ -38,6 +42,10 @@ export const update_user = yup.object({
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/, {
       message: "please follow user model instructions",
     }),
+  usage: yup.object({
+    web: yup.number(),
+    mobile: yup.number(),
+  }),
 });
 
 export const delete_user = yup.object({

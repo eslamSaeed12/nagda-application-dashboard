@@ -34,11 +34,15 @@ import Layout from "../../../wrappers/App-Layout";
 import cityServices from "../../../js/clients/city-services";
 import stationServices from "../../../js/clients/stations-services";
 import { update_city } from "../../../js/validators/city-validator";
+import { errorCatcher } from "../../../js/utils/error-catcher";
 const styles = makeStyles((df) => ({
   instructionsSection: {
     backgroundColor: df.palette.primary.dark,
     height: "100vh",
     boxShadow: df.shadows[8],
+    "@media(max-width:960px)": {
+      height: "auto",
+    },
   },
   noVerticalPadding: {
     paddingTop: 0,
@@ -125,23 +129,13 @@ const CityEditContainer = (props) => {
           .update({ body: data })
           .then((cityClientRes) => {
             setSuccessAlert("city has been updated successfully");
-            console.log(cityClientRes);
           })
           .catch((cityClientErr) => {
             if (process.env.NODE_ENV === "development") {
               console.error(cityClientErr);
             }
-            const responseMsg =
-              cityClientErr.response && cityClientErr.response.data
-                ? cityClientErr.response.data.msg
-                : null;
-            const requestMsg =
-              cityClientErr.request && cityClientErr.request.response
-                ? JSON.parse(cityClientErr.request.response).msg
-                : null;
-            setValidationErr([
-              responseMsg ? responseMsg : requestMsg || cityClientErr.message,
-            ]);
+
+            setValidationErr([errorCatcher(cityClientErr)]);
           });
       }
     },
@@ -286,7 +280,7 @@ const CityEditContainer = (props) => {
             </DialogActions>
           </Dialog>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item md={3} xs={12}>
           <Box className={instructionsSection} py={4}>
             <Container>
               <Typography variant="h5" className="white-clr capitalize">
@@ -340,13 +334,13 @@ const CityEditContainer = (props) => {
             </Container>
           </Box>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item md={9} xs={12}>
           <Container>
             <Box className={clsx(ContentSection)}>
               <Typography variant="h5" className="pop-Black capitalize">
-                add new city
+                edit a city
               </Typography>
-              <Box mt={4} width="70%">
+              <Box mt={4} width="95%">
                 <form noValidate autoComplete="off" onSubmit={handleSubmit}>
                   <Box>
                     <TextField
@@ -362,12 +356,10 @@ const CityEditContainer = (props) => {
                   </Box>
                   <Box mt={3}>
                     <Grid container>
-                      <Grid item xs={5}>
+                      <Grid item sm={5} xs={8}>
                         <Card elevation={4}>
                           <CardContent>
-                            <Typography variant="h6">
-                              stations avaialable
-                            </Typography>
+                            <Typography variant="h6">avaialable</Typography>
                             {stationsLoad ? (
                               <List>
                                 {stations.map((st, index) => {
@@ -463,11 +455,17 @@ const CityEditContainer = (props) => {
                           </IconButton>
                         </Box>
                       </Grid>
-                      <Grid item xs={5} key="right-section-box">
+                      <Grid
+                        item
+                        sm={5}
+                        xs={8}
+                        key="right-section-box"
+                        className="my-sm-4"
+                      >
                         <Card elevation={4}>
                           <CardContent>
                             <Typography variant="h6" className="capitalize">
-                              selected stations
+                              selected
                             </Typography>
                             {
                               <List>
@@ -546,7 +544,7 @@ const CityEditContainer = (props) => {
                           </Typography>
                         ) : null}
                       </Grid>
-                      <Grid item style={{ marginTop: "12px" }}>
+                      <Grid item xs={12} style={{ marginTop: "12px" }}>
                         <Box>
                           <Button
                             disabled={!isValid}

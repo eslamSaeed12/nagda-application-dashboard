@@ -55,6 +55,44 @@ $fonts:"Regular",
     display: none !important;
 }
 
-.width-slide-effect{
+.width-slide-effect {
     transition: width 0.2s ease;
 }
+
+
+.circles-responsive-wrapper {
+    @media(max-width:991px) {
+        flex-direction: column;
+        align-content: center;
+    }
+}
+
+.circle-item-margins {
+    @media(max-width:960px) {
+        margin-top: 12px;
+        margin-bottom: 12px;
+    }
+}
+
+.insider-circle-box {
+    @media(max-width:960px) {
+        min-width: 185px;
+        min-height: 180px;
+    }
+}
+
+
+
+.MuiDialog-root {
+    z-index: 99999 !important;
+}
+
+.my-sm-4 {
+    @media(max-width:600px) {
+        margin: 16px 0;
+    }
+}
+
+// lg = 1280
+// md = 960
+// sm = 600

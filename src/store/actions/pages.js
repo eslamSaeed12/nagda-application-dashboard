@@ -17,6 +17,7 @@ import {
   UPDATE_PROFILE_FAIL,
   UPDATE_PROFILE_LOAD,
   UPDATE_PROFILE_SAVED_DATA,
+  UPDATE_PROFILE_PASSWORD,
 } from "./names";
 import AuthServices from "../../js/clients/Auth-Services";
 import CommonServices from "../../js/clients/Common-Services";
@@ -24,6 +25,34 @@ import AuthForms from "../../js/forms/Auth";
 import CommonForms from "../../js/forms/Common";
 import profileServices from "../../js/clients/profile-services";
 import profileForms from "../../js/forms/profile";
+
+const IsJson = (val) => {
+  try {
+    JSON.parse(val);
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+const errorCatcher = (err) => {
+  if (err.response && err.response.data & err.response.data.msg) {
+    return err.response.data.msg;
+  }
+  if (err.request && err.request.response && IsJson(err.request.response)) {
+    return JSON.parse(err.request.response).msg;
+  }
+  if (
+    err.response &&
+    err.response.data &&
+    typeof err.response.data === "string"
+  ) {
+    return err.response.data;
+  }
+
+  return err.message;
+};
+
 export const commonly = {
   CHECK_JWT_TOKEN_LOAD: (payload) => ({ type: CHECK_JWT_USER_LOAD, payload }),
   CHECK_JWT_TOKEN_FAIL: (payload) => ({ type: CHECK_JWT_USER_FAIL, payload }),
@@ -37,12 +66,7 @@ export const commonly = {
           dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
         })
         .catch((err) => {
-          const msg =
-            err.response && err.response.msg
-              ? err.response.msg
-              : err.request.response
-              ? JSON.parse(err.request.response).msg
-              : err.message;
+          let msg = errorCatcher(err);
           dispatch(commonly.CHECK_JWT_TOKEN_FAIL(msg));
           dispatch(commonly.CHECK_JWT_TOKEN_LOAD(true));
         });
@@ -70,12 +94,7 @@ export const authEvents = {
           dispatch(authEvents.AUTH_LOGOUT_LOAD(true));
         })
         .catch((err) => {
-          const msg =
-            err.response && err.response.msg
-              ? err.response.msg
-              : err.request.response
-              ? JSON.parse(err.request.response).msg
-              : err.message;
+          const msg = errorCatcher(err);
           dispatch(authEvents.AUTH_LOGOUT_FAIL(msg));
           dispatch(authEvents.AUTH_LOGOUT_LOAD(true));
         });
@@ -98,12 +117,7 @@ export const indexEvents = {
           dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));
         })
         .catch((err) => {
-          const msg =
-            err.response && err.response.msg
-              ? err.response.msg
-              : err.request.response
-              ? JSON.parse(err.request.response).msg
-              : err.message;
+          const msg = errorCatcher(err);
           dispatch(indexEvents.ENTITES_COUNTS_FAIL(msg));
           dispatch(indexEvents.ENTITES_COUNTS_TRUTHY(true));
         });
@@ -131,24 +145,24 @@ export const profileEvents = {
   UPDATE_PROFILE_EV: (body) => {
     return (dispatch) => {
       dispatch(profileEvents.UPDATE_PROFILE_LOAD_EV(false));
+      console.log(body);
       profileServices
-        .updateProfile({ ...profileForms.update, body })
+        .updateProfile({ ...profileForms.UPDATE_PROFILE, data: body })
         .then((e) => {
           dispatch(profileEvents.UPDATE_PROFILE_DATA_EV(e.data.body));
           dispatch(profileEvents.UPDATE_PROFILE_LOAD_EV(true));
         })
         .catch((err) => {
-          const msg =
-            err.response && err.response.msg
-              ? err.response.msg
-              : err.request.response
-              ? JSON.parse(err.request.response).msg
-              : err.message;
+          const msg = errorCatcher(err);
           dispatch(profileEvents.UPDATE_PROFILE_FAIL_EV(msg));
           dispatch(profileEvents.UPDATE_PROFILE_LOAD_EV(true));
         });
     };
   },
+  update_Profile_password: (payload) => ({
+    type: UPDATE_PROFILE_PASSWORD,
+    payload,
+  }),
 };
 
 // confirmation events
@@ -176,19 +190,10 @@ export const confirmation = {
           dispatch(confirmation.CONFIRMATION_PROCESS_FAIL_EV(null));
         })
         .catch((err) => {
-          const msg =
-            err.response && err.response.msg
-              ? err.response.msg
-              : err.request.response
-              ? JSON.parse(err.request.response).msg
-              : err.message;
+          const msg = errorCatcher(err);
           dispatch(confirmation.CONFIRMATION_PROCESS_FAIL_EV(msg));
           dispatch(confirmation.CONFIRMATION_PROCESS_LOAD_EV(true));
         });
     };
   },
-};
-
-const users = {
-  
 };

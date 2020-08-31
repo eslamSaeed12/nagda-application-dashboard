@@ -1,5 +1,8 @@
 import React, { useState, Fragment, useEffect } from "react";
 import clsx from "clsx";
+import profileServices from "../../js/clients/profile-services";
+import ProfileForms from "../../js/forms/profile";
+import { errorCatcher } from "../../js/utils/error-catcher";
 import {
   Box,
   Grid,
@@ -27,14 +30,10 @@ import Alerto from "../../components/Snack-bar-custom";
 
 import confirmUserValidator from "../../js/validators/confirm-user";
 
-import UpdateProfileClient from "../../js/clients/profile-services";
-
-import UpdateProfileConfig from "../../js/forms/profile";
-
 import {
   profileEvents,
-  confirmation,
   authEvents,
+  confirmation,
 } from "../../store/actions/pages";
 
 import { Skeleton } from "@material-ui/lab";
@@ -45,20 +44,26 @@ import { connect } from "react-redux";
 
 import Layout from "../../wrappers/App-Layout";
 
-import aiUserImg from "../../static/images/ai-user.jpg";
-
 import { useFormik } from "formik";
-
-import profile from "../../js/forms/profile";
 
 const styles = makeStyles((df) => ({
   root: {
     height: "100vh",
+    "@media(max-width:960px)": {
+      padding: "18px 0",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+    },
   },
   leftGrid: {
     backgroundColor: df.palette.primary.dark,
     height: "100vh",
     position: "relative",
+    "@media(max-width:960px)": {
+      height: "auto",
+      backgroundColor: "#fff",
+    },
   },
   rightGrid: {
     height: "100vh",
@@ -66,6 +71,10 @@ const styles = makeStyles((df) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    "@media(max-width:960px)": {
+      height: "auto",
+      marginTop: 18,
+    },
   },
   hrStyle: {
     border: `3px solid ${df.palette.primary.dark}`,
@@ -79,11 +88,15 @@ const styles = makeStyles((df) => ({
   imgWrapper: {
     position: "absolute",
     boxShadow: df.shadows[4],
-    width: "250px",
-    height: "250px",
+    width: "180px",
+    height: "180px",
     borderRadius: 200,
     left: "60%",
     top: "30%",
+    "@media(max-width:960px)": {
+      position: "static",
+      margin: "0 auto",
+    },
   },
   darkPrimaryBtn: {
     backgroundColor: df.palette.primary.dark,
@@ -106,21 +119,16 @@ const styles = makeStyles((df) => ({
 const ConfirmPasswordComponent = (props) => {
   const [passwordType, setPasswordType] = useState(true);
 
-  let {
-    errors,
-    values,
-    handleChange,
-    handleSubmit,
-    isValid,
-    isValidating,
-    isSubmitting,
-  } = useFormik({
+  let { errors, values, handleChange, handleSubmit, isValid } = useFormik({
     initialValues: {
       id: props.state.auth.user._id,
     },
     validationSchema: confirmUserValidator,
     onSubmit: (data) => {
-      if (!isValidating && isSubmitting && isValid) {
+      if (isValid) {
+        props.state.dispatch(
+          profileEvents.update_Profile_password(data.password)
+        );
         props.state.dispatch(confirmation.CONFIRMATION_PROCESS_EV(data));
       }
     },
@@ -204,60 +212,99 @@ const ConfirmPasswordComponent = (props) => {
 
 const Profile = (props) => {
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
+
   const [BACK_DROP, SET_BACK_DROP] = useState(false);
+
   const [successUpdate, setSuccessUpdate] = useState(false);
+
   const [passwordType, setPasswordType] = useState(true);
+
+  const [updatedUser, setUpdatedUser] = useState(null);
+
+  const [updateUserClientErr, SetUpdateUserClientErr] = useState(null);
+
+  const [updateUserClientLoad, setUpdateUserClientLoad] = useState(false);
+
   const {
     handleSubmit,
     handleChange,
     values,
     errors,
     isValid,
+    setFieldValue,
     isSubmitting,
-    isValidating,
+    submitCount,
   } = useFormik({
     initialValues: {
       id: props.auth.user._id,
       email: props.auth.user.email,
       username: props.auth.user.username,
+      password: undefined,
+      newPassword: undefined,
     },
+    validateOnMount: false,
     validationSchema: UpdateProfileValidator,
     onSubmit: (data) => {
-      if (!isValidating && isSubmitting && isValid) {
-        props.dispatch(profileEvents.UPDATE_PROFILE_SAVED_DATA_FN(data));
+      if (isValid && submitCount <= 1) {
+        setOpenUpdateModal(true);
       }
     },
   });
 
-  const openModalEvt = () => setOpenUpdateModal(true);
+  const updateProfile = async (data) => {
+    try {
+      const updatedUser = await profileServices.updateProfile({
+        ...ProfileForms.UPDATE_PROFILE,
+        data,
+      });
+      setUpdatedUser(updatedUser.data.body);
+      setUpdateUserClientLoad(true);
+    } catch (err) {
+      SetUpdateUserClientErr(errorCatcher(err));
+      setUpdateUserClientLoad(true);
+    }
+  };
   const closeModalEvt = () => setOpenUpdateModal(false);
 
   useEffect(() => {
-    if (props.common.confirm_user_status) {
+    if (
+      props.common.confirm_user_load &&
+      props.common.confirm_user_status &&
+      props.profile.update_profile_password
+    ) {
+      updateProfile(values).catch((err) => console.error(err));
+    }
+  }, [props.common.confirm_user_load, props.common.confirm_user_status]);
+
+  useEffect(() => {
+    if (props.profile.update_profile_password) {
+      setFieldValue("password", props.profile.update_profile_password);
+    }
+  }, [props.profile.update_profile_password]);
+
+  useEffect(() => {
+    if (
+      props.profile.update_profile_password &&
+      props.common.confirm_user_status
+    ) {
       setOpenUpdateModal(false);
       SET_BACK_DROP(true);
-      props.dispatch(
-        profileEvents.UPDATE_PROFILE_EV(props.profile.update_prfoile_saved_data)
-      );
     }
-  }, [props.common.confirm_user_status]);
+  }, [props.profile.update_profile_password, props.common.confirm_user_status]);
 
   useEffect(() => {
-    if (props.profile.update_profile_fail) {
+    if (updateUserClientErr) {
       SET_BACK_DROP(false);
     }
-  }, [props.profile.update_profile_fail]);
+  }, [updateUserClientErr]);
 
   useEffect(() => {
-    if (props.profile.update_profile_updated_data) {
-      props.dispatch(
-        authEvents.AUTH_USER(props.profile.update_profile_updated_data)
-      );
-      console.log(props.profile.update_profile_updated_data);
+    if (updatedUser) {
+      props.dispatch(authEvents.AUTH_USER(updatedUser));
       SET_BACK_DROP(false);
       setSuccessUpdate(true);
     }
-  }, [props.profile.update_profile_updated_data]);
+  }, [updatedUser]);
 
   const {
     leftGrid,
@@ -300,12 +347,12 @@ const Profile = (props) => {
         </Backdrop>
       ) : null}
       <Grid container>
-        <Grid xs={3} className={leftGrid} item>
+        <Grid md={3} xs={12} className={leftGrid} item>
           <Box className={imgWrapper}>
-            <img src={aiUserImg} className={imgProfile} />
+            <img src={props.auth.user.image_link} className={imgProfile} />
           </Box>
         </Grid>
-        <Grid xs={9} className={rightGrid} item>
+        <Grid md={9} xs={12} className={rightGrid} item>
           <Box
             display="flex"
             flexDirection="column"
@@ -318,19 +365,19 @@ const Profile = (props) => {
             </Typography>
           </Box>
           <Box>
-            {props.profile.update_profile_fail ? (
+            {updateUserClientErr ? (
               <List>
-                {typeof props.profile.update_profile_fail === "string" ? (
+                {typeof updateUserClientErr === "string" ? (
                   <ListItem>
                     <ListItemIcon>
                       <Error />
                     </ListItemIcon>
                     <ListItemText className={errorText}>
-                      {props.profile.update_profile_fail}
+                      {updateUserClientErr}
                     </ListItemText>
                   </ListItem>
                 ) : (
-                  props.profile.update_profile_fail.map((err, index) => {
+                  updateUserClientErr.map((err, index) => {
                     return (
                       <ListItem key={`err-list-item-key${index}`}>
                         <ListItemIcon>
@@ -344,14 +391,6 @@ const Profile = (props) => {
               </List>
             ) : null}
             <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-              {props.auth.user && props.auth.user.id ? (
-                <input
-                  onChange={handleChange}
-                  name="id"
-                  type="hidden"
-                  value={values.id}
-                />
-              ) : null}
               <Box>
                 {props.auth.user && props.auth.user.username ? (
                   <Fragment>
@@ -395,11 +434,11 @@ const Profile = (props) => {
                   onChange={handleChange}
                   variant="standard"
                   label="password"
-                  name="password"
+                  name="newPassword"
                   type={passwordType ? "password" : "text"}
-                  value={values.password}
-                  error={errors.password ? true : false}
-                  helperText={errors.password ? errors.password : null}
+                  value={values.newPassword}
+                  error={errors.newPassword ? true : false}
+                  helperText={errors.newPassword ? errors.newPassword : null}
                 />
                 <IconButton
                   style={{ position: "absolute", right: "0rem" }}
@@ -413,8 +452,7 @@ const Profile = (props) => {
                   variant="contained"
                   color="primary"
                   size="large"
-                  onClick={openModalEvt}
-                  disabled={!isValid}
+                  disabled={!isValid || submitCount > 0}
                   type="submit"
                   className={clsx("white-clr", darkPrimaryBtn)}
                 >

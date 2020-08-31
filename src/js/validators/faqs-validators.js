@@ -5,7 +5,7 @@ export const create_faq = yup.object({
     .string()
     .min(30)
     .max(255)
-    .matches(/^([a-zA-z ]+)$/, {
+    .matches(/^([a-zA-z\u0600-\u06FF ]+)$/, {
       message: "please follow the faq model instrcutions",
     })
     .required(),
@@ -18,7 +18,7 @@ export const update_faq = yup.object({
     .string()
     .min(30)
     .max(255)
-    .matches(/^([a-zA-z ]+)$/, {
+    .matches(/^([a-zA-z\u0600-\u06FF ]+)$/, {
       message: "please follow the faq model instrcutions",
     }),
   description: yup.string().min(30).max(2000),

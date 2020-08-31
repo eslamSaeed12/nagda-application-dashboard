@@ -12,7 +12,6 @@ import {
   LocationOn,
   Policy,
   Lock,
-  AccountBox,
   Feedback,
   AccountBalance,
 } from "@material-ui/icons";
@@ -29,15 +28,22 @@ import { indexEvents } from "../../store/actions/pages";
 
 import SnackErr from "../../components/Snack-bar-custom";
 
-const styles = makeStyles((df) => ({
-  UsernameSpanColor: {
-    color: df.palette.primary.light,
-  },
-  root: {
-    backgroundColor: "#ffff",
-    height: "100%",
-  },
-}));
+const styles = makeStyles((df) => {
+  return {
+    UsernameSpanColor: {
+      color: df.palette.primary.light,
+    },
+    root: {
+      backgroundColor: "#ffff",
+      height: "100%",
+    },
+    responsiveCirclesContainer: {
+      "@media(max-width:960px)": {
+        flexDirection: "column",
+      },
+    },
+  };
+});
 
 const DashWelcomeHeader = (props) => {
   const { UsernameSpanColor } = styles();
@@ -61,7 +67,7 @@ const DashHome = (props) => {
   const [roundedEntities, setRoundedEntities] = useState(null);
   const [roundedEntitiesLoad, setRoundedEntitiesLoad] = useState(false);
   const [ERR, SET_ERR] = useState(null);
-
+  const classes = styles();
   useEffect(() => {
     if (props.auth.user) {
       props.dispatch(indexEvents.ENTITIES_COUNTS_FN());
@@ -147,7 +153,12 @@ const DashHome = (props) => {
             >
               important to know statics
             </Typography>
-            <Grid container justify="space-between">
+            <Grid
+              container
+              justify="space-between"
+              className={classes.responsiveCirclesContainer}
+              alignContent="center"
+            >
               {circlesEntitesLoad
                 ? circlesEntites.map((c, ind) => {
                     return (
@@ -157,7 +168,9 @@ const DashHome = (props) => {
                         Icon={c.icon}
                         count={c.count}
                         color={c.color}
-                        xs={2}
+                        className="circle-item-margins"
+                        md={2}
+                        sm={5}
                       />
                     );
                   })
@@ -192,7 +205,7 @@ const DashHome = (props) => {
                         Icon={c.icon}
                         count={c.count}
                         color={c.color}
-                        grid={{ xs: 3 }}
+                        grid={{ lg: 3, md: 4, sm: 6, xs: 8 }}
                       />
                     );
                   })

@@ -18,6 +18,11 @@ class logservices {
       withCredentials: true,
     });
   }
+
+  reset() {
+    const config = logsForms.reset;
+    return axios.request({ ...config, withCredentials: true });
+  }
 }
 
 export default new logservices();

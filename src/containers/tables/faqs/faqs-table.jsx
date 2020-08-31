@@ -251,7 +251,6 @@ const FaqsGridTable = (props) => {
     faqsServices
       .getAll()
       .then((e) => {
-        console.log(e.data.body);
         const convertTimeToMomment = (data) => {
           return data.map((dt) => {
             return {

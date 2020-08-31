@@ -222,7 +222,6 @@ const StationsGridTable = (props) => {
           const omitted = _.omit(newData, ["createdAt", "updatedAt", "__v"]);
           omitted.id = newData._id;
           _.unset(omitted, "_id");
-          console.log(omitted);
           const fullifed = {
             title: omitted.title,
             location: {
@@ -233,7 +232,6 @@ const StationsGridTable = (props) => {
             },
             id: omitted.id,
           };
-          console.log(fullifed, "fullfiled");
           update_station
             .validate(fullifed)
             .then((vdata) => {

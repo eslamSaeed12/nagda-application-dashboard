@@ -14,10 +14,7 @@ export default {
     entites: null,
   },
   profile: {
-    update_profile_load: null,
-    update_profile_fail: null,
-    update_profile_updated_data: null,
-    update_prfoile_saved_data: null,
+    update_profile_password: undefined,
   },
   common: {
     confirm_user_status: null,

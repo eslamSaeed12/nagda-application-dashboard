@@ -17,6 +17,13 @@ const schema = yup.object().shape({
     })
     .min(8)
     .max(18),
+  newPassword: yup
+    .string()
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/, {
+      message: "password not follow the instructions",
+    })
+    .min(8)
+    .max(18),
 });
 
 export default schema;

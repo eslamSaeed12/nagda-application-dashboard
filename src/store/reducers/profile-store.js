@@ -4,9 +4,10 @@ import {
   UPDATE_PROFILE_UPDATED_DATA,
   UPDATE_PROFILE_LOAD,
   UPDATE_PROFILE_FAIL,
+  UPDATE_PROFILE_PASSWORD,
 } from "../actions/names";
 
-export const profileStore = (state = ini.index, action) => {
+export const profileStore = (state = ini.profile, action) => {
   switch (action.type) {
     case UPDATE_PROFILE_LOAD:
       return { ...state, update_profile_load: action.payload };
@@ -16,6 +17,8 @@ export const profileStore = (state = ini.index, action) => {
       return { ...state, update_profile_updated_data: action.payload };
     case UPDATE_PROFILE_FAIL:
       return { ...state, update_profile_fail: action.payload };
+    case UPDATE_PROFILE_PASSWORD:
+      return { ...state, update_profile_password: action.payload };
     default:
       return { ...state };
   }

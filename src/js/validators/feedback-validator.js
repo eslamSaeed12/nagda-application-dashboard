@@ -15,7 +15,7 @@ export const create_feedback = yup.object().shape({
     .string()
     .min(30)
     .max(800)
-    .matches(/^([a-zA-Z 1-9]+)$/, {
+    .matches(/^([a-zA-Z\u0600-\u06FF 1-9]+)$/, {
       message: "please follow the feedback model instrctions",
     })
     .required(),
@@ -36,7 +36,7 @@ export const update_feedback = yup.object().shape({
     .string()
     .min(30)
     .max(800)
-    .matches(/^([a-zA-Z 1-9]+)$/, {
+    .matches(/^([a-zA-Z\u0600-\u06FF 1-9]+)$/, {
       message: "please follow the feedback model instrctions",
     }),
 });

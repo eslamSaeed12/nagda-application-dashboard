@@ -5,7 +5,7 @@ export const create_city = yup.object({
     .string()
     .min(6)
     .max(50)
-    .matches(/^([a-zA-Z -]+)$/, {
+    .matches(/^([a-zA-Z\u0600-\u06FF -]+)$/, {
       message: "please follow cicty model instrcutions",
     })
     .required(),
@@ -17,7 +17,7 @@ export const update_city = yup.object({
     .string()
     .min(6)
     .max(50)
-    .matches(/^([a-zA-Z -]+)$/, {
+    .matches(/^([a-zA-Z\u0600-\u06FF -]+)$/, {
       message: "please follow cicty model instrcutions",
     }),
   stations: yup.array().of(yup.string().length(24).optional()).default([]),

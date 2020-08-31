@@ -1,11 +1,11 @@
 import axios from "axios";
 
 class profileServices {
-  updateProfile({ method, action, body }) {
+  updateProfile({ method, url, data }) {
     return axios.request({
       method,
-      url: action,
-      data: body,
+      url,
+      data,
       withCredentials: true,
     });
   }

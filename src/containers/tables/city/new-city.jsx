@@ -38,6 +38,9 @@ const styles = makeStyles((df) => ({
     backgroundColor: df.palette.primary.dark,
     height: "100vh",
     boxShadow: df.shadows[8],
+    "@media(max-width:960px)": {
+      height: "auto",
+    },
   },
   noVerticalPadding: {
     paddingTop: 0,
@@ -243,7 +246,7 @@ const CityAddContainer = (props) => {
             </DialogActions>
           </Dialog>
         ) : null}
-        <Grid item xs={3}>
+        <Grid item md={3} xs={12}>
           <Box className={instructionsSection} py={4}>
             <Container>
               <Typography variant="h5" className="white-clr capitalize">
@@ -297,13 +300,13 @@ const CityAddContainer = (props) => {
             </Container>
           </Box>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item md={9} xs={12}>
           <Container>
             <Box className={clsx(ContentSection)}>
               <Typography variant="h5" className="pop-Black capitalize">
                 add new city
               </Typography>
-              <Box mt={4} width="70%">
+              <Box mt={4} width="95%">
                 <form noValidate autoComplete="off" onSubmit={handleSubmit}>
                   <Box>
                     <TextField
@@ -319,7 +322,7 @@ const CityAddContainer = (props) => {
                   </Box>
                   <Box mt={3}>
                     <Grid container>
-                      <Grid item xs={5}>
+                      <Grid item sm={5} xs={8}>
                         <Card elevation={4}>
                           <CardContent>
                             <Typography variant="h6">
@@ -420,7 +423,13 @@ const CityAddContainer = (props) => {
                           </IconButton>
                         </Box>
                       </Grid>
-                      <Grid item xs={5} key="right-section-box">
+                      <Grid
+                        item
+                        sm={5}
+                        xs={8}
+                        key="right-section-box"
+                        className="my-sm-4"
+                      >
                         <Card elevation={4}>
                           <CardContent>
                             <Typography variant="h6" className="capitalize">
@@ -497,7 +506,7 @@ const CityAddContainer = (props) => {
                           </Typography>
                         ) : null}
                       </Grid>
-                      <Grid item style={{ marginTop: "12px" }}>
+                      <Grid item xs={12} style={{ marginTop: "12px" }}>
                         <Box>
                           <Button
                             disabled={!isValid}

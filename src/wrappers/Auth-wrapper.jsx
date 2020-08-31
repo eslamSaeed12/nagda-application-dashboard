@@ -1,12 +1,9 @@
 import React from "react";
-import { commonly, authEvents } from "../store/actions/pages";
+import { commonly } from "../store/actions/pages";
 import { Redirect } from "react-router-dom";
 import Loader from "../components/loader";
 const AuthWrapper = (Component, roles) => {
   return class withAuthentication extends React.Component {
-    state = {
-      authenticated: null,
-    };
     dispatcher = this.props.dispatch;
     componentDidMount() {
       this.dispatcher(commonly.CHECK_JWT_TOKEN_FN());
@@ -31,6 +28,7 @@ const AuthWrapper = (Component, roles) => {
       ) {
         return <Redirect to="/home" />;
       }
+
       return <Redirect to="/login" />;
     }
   };

@@ -1,6 +1,7 @@
 import React from "react";
 import { Typography, Box, makeStyles, Grid } from "@material-ui/core";
-
+import clsx from "clsx";
+import { constants } from "../js/constants.json";
 const styles = makeStyles((df) => ({
   shadowLg: {
     boxShadow: df.shadows[18],
@@ -10,41 +11,34 @@ const styles = makeStyles((df) => ({
     flexDirection: "column",
     justifyContent: "center",
   },
+  responsiveIcon: {
+    textAlign: "center",
+    fontSize: 60,
+    margin: "0 auto",
+    "@media(max-width:960px)": {
+      fontSize: 40,
+    },
+  },
 }));
 
 export const CircleBox = (props) => {
-  const { shadowLg, boxStyle } = styles();
-  const gridRef = React.useRef();
-  const [circleSize, setCircleSize] = React.useState();
-
-  React.useEffect(() => setCircleSize(gridRef.current.offsetWidth), [gridRef]);
+  const { shadowLg, boxStyle, responsiveIcon } = styles();
 
   return (
-    <Grid
-      ref={gridRef}
-      item
-      xs={props.xs}
-      lg={props.lg}
-      md={props.md}
-      sm={props.sm}
-      className={shadowLg + " " + boxStyle + " " + "hover-Top"}
-      style={{
-        borderRadius: "200px",
-        height: Number(circleSize + 10) + "px",
-        backgroundColor: props.color,
-      }}
-    >
+    <Grid item {...props} className={clsx(props.className)}>
       <Box
         display="flex"
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
+        height="100%"
+        borderRadius={200}
+        style={{ backgroundColor: "#FFC107" }}
+        py={4}
+        className={clsx(shadowLg, boxStyle, "hover-Top",'insider-circle-box')}
       >
         <Box display="flex" flexDirection="column" textAlign="center">
-          <props.Icon
-            className="white-clr"
-            style={{ textAlign: "center", fontSize: 70, margin: "0 auto" }}
-          />
+          <props.Icon className={clsx("white-clr", responsiveIcon)} />
           <Typography
             variant="h6"
             align="center"

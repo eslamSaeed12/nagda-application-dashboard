@@ -10,6 +10,7 @@ import { authEvents } from "../../store/actions/pages";
 import { useHistory } from "react-router-dom";
 import { commonly } from "../../store/actions/pages";
 import Loader from "../../components/loader";
+import { errorCatcher } from "../../js/utils/error-catcher.js";
 import { ClipLoader } from "react-spinners";
 import {
   makeStyles,
@@ -44,6 +45,8 @@ const styles = makeStyles((df) => ({
   },
   imgWrapper: {
     alignSelf: "center",
+    width: "100%",
+    padding: "0 12px",
   },
   paddingVertical: {
     padding: df.spacing(2),
@@ -77,12 +80,7 @@ const Login = (props) => {
       router.push("/home");
       return;
     } catch (err) {
-      const msg =
-        err.response && err.response.msg
-          ? err.response.msg
-          : err.request.response
-          ? JSON.parse(err.request.response).msg
-          : err.message;
+      const msg = errorCatcher(err);
       setErr(msg);
       setAuthLoading(false);
     }
@@ -133,7 +131,7 @@ const Login = (props) => {
         </Box>
       ) : null}
       <Grid container>
-        <Grid xs={8} item className={mookUpWrapper}>
+        <Grid md={8} sm={6} xs={12} item className={mookUpWrapper}>
           <img src={AppMockup} className={imgWrapper} />
           <Container>
             <Typography align="center" className="white-clr" component="div">
@@ -154,7 +152,7 @@ const Login = (props) => {
             </Typography>
           </Container>
         </Grid>
-        <Grid xs={4} item>
+        <Grid md={4} sm={6} xs={12} item>
           <Box py={4}>
             <Container>
               <Box mt={4}>

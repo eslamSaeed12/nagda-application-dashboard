@@ -47,6 +47,14 @@ const Table = (props) => {
       field: "NewPassword",
     },
     {
+      title: "web-usage",
+      field: "webUsage",
+    },
+    {
+      title: "mobile-usage",
+      field: "mobileUsage",
+    },
+    {
       title: "OriginalPassword",
       field: "password",
       hidden: true,
@@ -126,7 +134,13 @@ const UsersGridTable = (props) => {
       return new Promise((resolve, reject) => {
         newData.password = newData.NewPassword;
         const omitted = _.pull(newData, ["username", "email", "password"]);
+        omitted["usage"] = {
+          web: newData.webUsage,
+          mobile: newData.mobileUsage,
+        };
         _.unset(omitted, "NewPassword");
+        _.unset(omitted, "webUsage");
+        _.unset(omitted, "mobileUsage");
         setTimeout(() => {
           create_user
             .validate(omitted, {
@@ -222,7 +236,13 @@ const UsersGridTable = (props) => {
             "__v",
           ]);
           omitted.id = newData._id;
+          omitted["usage"] = {
+            web: newData.webUsage,
+            mobile: newData.mobileUsage,
+          };
           _.unset(omitted, "_id");
+          _.unset(omitted, "mobileUsage");
+          _.unset(omitted, "webUsage");
           if (oldData.password === omitted.password) {
             _.unset(omitted, "password");
           }
@@ -237,6 +257,9 @@ const UsersGridTable = (props) => {
                   let index = oldData.tableData.id;
                   const updatedUser = clientResponse.data.body;
                   data[index] = updatedUser;
+                  data[index].createdAt = moment(data[index].createdAt);
+                  data[index].webUsage = updatedUser.usage.web;
+                  data[index].mobileUsage = updatedUser.usage.mobile;
                   data[index].createdAt = moment(data[index].createdAt)
                     .startOf("hour")
                     .fromNow();
@@ -280,6 +303,8 @@ const UsersGridTable = (props) => {
               ...dt,
               createdAt: moment(dt.createdAt).startOf("hour").fromNow(),
               updatedAt: moment(dt.updatedAt).startOf("hour").fromNow(),
+              webUsage: dt.usage.web,
+              mobileUsage: dt.usage.mobile,
             };
           });
         };

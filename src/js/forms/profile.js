@@ -1,8 +1,8 @@
 import { constants } from "../constants.json";
 
 export default {
-  update: {
+  UPDATE_PROFILE: {
     method: "PATCH",
-    action: `${constants["api-host"]}/api/admin`,
+    url: `${constants["api-host"]}/admin/profile`,
   },
 };

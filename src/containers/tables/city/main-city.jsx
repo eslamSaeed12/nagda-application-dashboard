@@ -187,7 +187,6 @@ const CityGridTable = (props) => {
     cityServices
       .getAll()
       .then((cityRsponse) => {
-        console.log(cityRsponse.data.body);
         const convertTimeToMomment = (data) => {
           return data.map((dt) => {
             return {

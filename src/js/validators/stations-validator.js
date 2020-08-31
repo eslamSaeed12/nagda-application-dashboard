@@ -5,7 +5,7 @@ export const create_station = yup.object({
     .string()
     .min(8)
     .max(50)
-    .matches(/^([a-zA-z 1-9]+)$/, {
+    .matches(/^([a-zA-z\u0600-\u06FF 1-9]+)$/, {
       message: "please follow the station model instrcutions",
     })
     .required(),
@@ -27,7 +27,7 @@ export const update_station = yup.object({
     .string()
     .min(8)
     .max(50)
-    .matches(/^([a-zA-z 1-9]+)$/, {
+    .matches(/^([a-zA-z\u0600-\u06FF 1-9]+)$/, {
       message: "please follow the station model instrcutions",
     }),
   location: yup.object({

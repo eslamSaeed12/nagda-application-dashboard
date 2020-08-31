@@ -17,6 +17,7 @@ import EditCityPage from "./containers/tables/city/edit-city";
 import UnAuhtorized from "./containers/common/unAuhtorized";
 import BadRequest from "./containers/common/bad-request";
 import InternalServerError from "./containers/common/internal-server-error";
+import SettingsPage from "./containers/settings/settings-container";
 import {
   CssBaseline,
   createMuiTheme,
@@ -25,6 +26,7 @@ import {
 } from "@material-ui/core";
 
 import "./static/sass/main.scss";
+import settingsContainer from "./containers/settings/settings-container";
 
 const overridedTheme = createMuiTheme({
   typography: {
@@ -119,6 +121,10 @@ const gridTables = [
     path: "/city/edit/:id",
     component: EditCityPage,
   },
+  {
+    path: "/settings",
+    component: settingsContainer,
+  },
 ];
 
 function App(props) {
@@ -151,7 +157,7 @@ function App(props) {
               <Route path="/bad-request/:error">
                 <BadRequest />
               </Route>
-              
+
               <Route path="/server-down">
                 <InternalServerError />
               </Route>

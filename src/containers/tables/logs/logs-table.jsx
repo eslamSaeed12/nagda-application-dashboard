@@ -21,7 +21,7 @@ import serverImg from "../../../static/images/undraw_server_q2pb.svg";
 import { DataManagerStarter } from "../../../components/data-manager-starter";
 import logsServices from "../../../js/clients/logs-services";
 import { deleteLog } from "../../../js/validators/logs-validator";
-import Alerto from '../../../components/Snack-bar-custom';
+import Alerto from "../../../components/Snack-bar-custom";
 const styles = makeStyles((df) => ({
   img: {
     width: "40%",
@@ -190,7 +190,7 @@ const FaqsGridTable = (props) => {
           </Box>
         ) : null}
         {validationErrors ? (
-          <Dialog open={true}>
+          <Dialog open={true} style={{ zIndex: 99889 }}>
             <DialogTitle>validation error</DialogTitle>
             <DialogContent>
               <List>

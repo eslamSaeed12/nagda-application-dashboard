@@ -119,6 +119,7 @@ const styles = makeStyles((df) => {
     },
     content: {
       flex: "1",
+      width: "80%",
     },
     userImgWrapper: {
       display: "flex",

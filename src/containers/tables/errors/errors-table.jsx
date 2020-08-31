@@ -3,7 +3,7 @@ import Auth from "../../../wrappers/Auth-wrapper";
 import * as _ from "lodash";
 import { connect } from "react-redux";
 import MuiTable from "mui-datatables";
-import Alerto from '../../../components/Snack-bar-custom';
+import Alerto from "../../../components/Snack-bar-custom";
 import {
   Box,
   Container,
@@ -102,7 +102,6 @@ const FaqsGridTable = (props) => {
 
   const editableFunctions = {
     onRowsDelete: (param1, param2, param3) => {
-      console.log(param1, param2, param3);
       const selector = Logs[param1.data[0].index];
       let status;
       deleteLog
