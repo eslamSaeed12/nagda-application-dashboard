@@ -1,7 +1,6 @@
 import React from "react";
 import { Typography, Box, makeStyles, Grid } from "@material-ui/core";
 import clsx from "clsx";
-import { constants } from "../js/constants.json";
 const styles = makeStyles((df) => ({
   shadowLg: {
     boxShadow: df.shadows[18],
