@@ -322,7 +322,15 @@ const CityAddContainer = (props) => {
                   </Box>
                   <Box mt={3}>
                     <Grid container>
-                      <Grid item sm={5} xs={8}>
+                      <Grid
+                        item
+                        sm={5}
+                        xs={8}
+                        style={{
+                          overflowY: "scroll",
+                          maxHeight: "250px",
+                        }}
+                      >
                         <Card elevation={4}>
                           <CardContent>
                             <Typography variant="h6">
@@ -429,6 +437,10 @@ const CityAddContainer = (props) => {
                         xs={8}
                         key="right-section-box"
                         className="my-sm-4"
+                        style={{
+                          overflowY: "scroll",
+                          maxHeight: "250px",
+                        }}
                       >
                         <Card elevation={4}>
                           <CardContent>
