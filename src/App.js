@@ -17,14 +17,12 @@ import EditCityPage from "./containers/tables/city/edit-city";
 import UnAuhtorized from "./containers/common/unAuhtorized";
 import BadRequest from "./containers/common/bad-request";
 import InternalServerError from "./containers/common/internal-server-error";
-import SettingsPage from "./containers/settings/settings-container";
 import {
   CssBaseline,
   createMuiTheme,
   ThemeProvider,
   StylesProvider,
 } from "@material-ui/core";
-
 import "./static/sass/main.scss";
 import settingsContainer from "./containers/settings/settings-container";
 
