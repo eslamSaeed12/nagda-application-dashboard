@@ -3,22 +3,22 @@ import { constants } from "../constants";
 export default {
   CREATE: {
     method: "POST",
-    url: `${constants["api-host"]}/city`,
+    url: `${process.env.REACT_APP_HOST}/city`,
   },
   UPDATE: {
     method: "PATCH",
-    url: `${constants["api-host"]}/city`,
+    url: `${process.env.REACT_APP_HOST}/city`,
   },
   DELETE: {
     method: "DELETE",
-    url: `${constants["api-host"]}/city`,
+    url: `${process.env.REACT_APP_HOST}/city`,
   },
   GET_ALL: {
     method: "GET",
-    url: `${constants["api-host"]}/city`,
+    url: `${process.env.REACT_APP_HOST}/city`,
   },
   FIND: (id) => ({
     method: "GET",
-    url: `${constants["api-host"]}/city/${id}`,
+    url: `${process.env.REACT_APP_HOST}/city/${id}`,
   }),
 };

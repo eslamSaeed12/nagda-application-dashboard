@@ -1,20 +1,18 @@
-import { constants } from "../constants.js";
-
 export default {
   CREATE: {
     method: "POST",
-    url: `${constants["api-host"]}/role`,
+    url: `${process.env.REACT_APP_HOST}/role`,
   },
   UPDATE: {
     method: "PATCH",
-    url: `${constants["api-host"]}/role`,
+    url: `${process.env.REACT_APP_HOST}/role`,
   },
   DELETE: {
     method: "DELETE",
-    url: `${constants["api-host"]}/role`,
+    url: `${process.env.REACT_APP_HOST}/role`,
   },
   GET_ALL: {
     method: "GET",
-    url: `${constants["api-host"]}/role`,
+    url: `${process.env.REACT_APP_HOST}/role`,
   },
 };

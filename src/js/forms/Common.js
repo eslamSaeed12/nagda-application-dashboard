@@ -1,8 +1,6 @@
-import { constants } from "../constants.js";
-
 export default {
   Counter: {
     method: "POST",
-    action: `${constants["api-host"]}/misc/entites-counter`,
+    action: `${process.env.REACT_APP_HOST}/misc/entites-counter`,
   },
 };

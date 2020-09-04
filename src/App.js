@@ -133,7 +133,7 @@ function App(props) {
       <StylesProvider injectFirst>
         <ThemeProvider theme={overridedTheme}>
           <CssBaseline />
-          <Router>
+          <Router basename="/cp">
             <Switch>
               <Route path="/login" exact={true}>
                 <LoginContainer />

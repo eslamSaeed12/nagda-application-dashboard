@@ -6,6 +6,7 @@ import * as serviceWorker from "./serviceWorker";
 import { Provider } from "react-redux";
 import { store } from "./store/store";
 import ErrorWrapper from "./containers/common/Strict-Error-Wrapper";
+import "./js/utils/axios";
 ReactDOM.render(
   <React.StrictMode>
     <ErrorWrapper>

@@ -1,20 +1,18 @@
-import { constants } from "../constants.js";
-
 export default {
   CREATE: {
     method: "POST",
-    url: `${constants["api-host"]}/feedback`,
+    url: `${process.env.REACT_APP_HOST}/feedback`,
   },
   UPDATE: {
     method: "PATCH",
-    url: `${constants["api-host"]}/feedback`,
+    url: `${process.env.REACT_APP_HOST}/feedback`,
   },
   DELETE: {
     method: "DELETE",
-    url: `${constants["api-host"]}/feedback`,
+    url: `${process.env.REACT_APP_HOST}/feedback`,
   },
   GET_ALL: {
     method: "GET",
-    url: `${constants["api-host"]}/feedback`,
+    url: `${process.env.REACT_APP_HOST}/feedback`,
   },
 };

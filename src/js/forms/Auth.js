@@ -3,18 +3,18 @@ import { constants } from "../constants";
 export default {
   Login: {
     method: "POST",
-    action: `${constants["api-host"]}/auth/login`,
+    action: `${process.env.REACT_APP_HOST}/auth/login`,
   },
   Logout: {
     method: "POST",
-    action: `${constants["api-host"]}/auth/logout`,
+    action: `${process.env.REACT_APP_HOST}/auth/logout`,
   },
   check: {
     method: "POST",
-    action: `${constants["api-host"]}/auth/who-me`,
+    action: `${process.env.REACT_APP_HOST}/auth/who-me`,
   },
   confirm: {
     method: "POST",
-    action: `${constants["api-host"]}/auth/confirm-user`,
+    action: `${process.env.REACT_APP_HOST}/auth/confirm-user`,
   },
 };

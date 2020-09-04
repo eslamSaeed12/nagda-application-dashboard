@@ -1,8 +1,6 @@
-import { constants } from "../constants.js";
-
 export default {
   UPDATE_PROFILE: {
     method: "PATCH",
-    url: `${constants["api-host"]}/admin/profile`,
+    url: `${process.env.REACT_APP_HOST}/admin/profile`,
   },
 };
